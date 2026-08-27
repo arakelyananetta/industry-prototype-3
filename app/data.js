@@ -17,7 +17,7 @@ export const NAV = [
     section: 'Сервисы',
     items: [
       { id: 'services', label: 'Сервисы для бизнеса', icon: 'segments' },
-      { id: 'loyalty', label: 'KD Pay · клуб друзей', icon: 'people', badge: 'Новое', badgeClass: 'purple' },
+      { id: 'loyalty', label: 'Клуб друзей', icon: 'people', badge: 'Новое', badgeClass: 'purple' },
       { id: 'xpay', label: 'X pay', icon: 'acquiring', badge: 'Новое', badgeClass: 'purple' },
       { id: 'one', label: 'МТС One', icon: 'phone', badge: 'Новое', badgeClass: 'purple' },
     ],
