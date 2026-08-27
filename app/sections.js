@@ -915,16 +915,8 @@ function Services({ ctx }) {
 function Payments({ ctx }) {
   const [form, setForm] = useState(false)
   return (
-    <SectionShell title="Финансы" sub="Деньги бизнеса и движение средств" ctx={ctx}
+    <SectionShell title="Финансы" sub="Всё о деньгах бизнеса на одном экране — нажмите на продукт, чтобы открыть детали" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Новый перевод</button>}>
-      <div className="chips-row" style={{ marginTop: 14 }}>
-        <button className="filter-chip" onClick={() => ctx.go('cards')}>💳 Карты</button>
-        <button className="filter-chip" onClick={() => ctx.go('deposits')}>💰 Накопления</button>
-        <button className="filter-chip" onClick={() => ctx.go('xpay')}>⚡ Мгновенные переводы</button>
-        <button className="filter-chip" onClick={() => ctx.go('promos')}>🎁 Акции</button>
-        <button className="filter-chip" onClick={() => ctx.go('documents')}>📄 Документы</button>
-        <button className="filter-chip" onClick={() => ctx.go('guarantees')}>🛡 Гарантии</button>
-      </div>
       <div className="balance-card">
         <div>
           <div className="b-label">Деньги бизнеса · …3456</div>
@@ -935,6 +927,30 @@ function Payments({ ctx }) {
           <button onClick={() => ctx.openProfile()}>Реквизиты</button>
           <button onClick={() => ctx.go('documents')}>Отчёт</button>
         </div>
+      </div>
+      {/* ключевая информация по каждому продукту — клик открывает детализацию */}
+      <div className="fin-grid">
+        {[
+          { to: 'acquiring', emoji: '🏪', name: 'Приём оплаты', value: '58 300 ₽ сегодня', note: 'комиссия 1,1% · курьерский терминал офлайн', alert: true },
+          { to: 'accounting', emoji: '🧾', name: 'Налоги и отчётность', value: '18 675 ₽ до 25 августа', note: 'аванс УСН — оплата в один клик', alert: true },
+          { to: 'cards', emoji: '💳', name: 'Карты', value: 'МИР Supreme · активна', note: 'кэшбэк 3% — 3 552 ₽ за август · лимит 500 000 ₽' },
+          { to: 'xpay', emoji: '⚡', name: 'Мгновенные переводы', value: 'комиссия 0,3%', note: 'оплата по QR — деньги приходят сразу' },
+          { to: 'deposits', emoji: '💰', name: 'Накопления', value: 'до 19,5% годовых', note: 'свободные 2 456 780 ₽ могут приносить доход' },
+          { to: 'credits', emoji: '📈', name: 'Деньги на развитие', value: '3 000 000 ₽ одобрено', note: 'от 11,5% · предложение действует ещё 14 дней' },
+          { to: 'guarantees', emoji: '🛡', name: 'Гарантии для сделок', value: '2 действующие', note: 'на сумму 1 540 000 ₽ · новая — онлайн от 1 дня' },
+          { to: 'promos', emoji: '🎁', name: 'Акции', value: '6 предложений', note: 'приём оплаты 1,1% · +1,5% к накоплениям' },
+          { to: 'documents', emoji: '📄', name: 'Документы', value: 'Отчёт за июль готов', note: 'договоры, справки и акты — в одном месте' },
+        ].map((p) => (
+          <div key={p.to} className="card fin-card" onClick={() => ctx.go(p.to)}>
+            <div className="fin-top">
+              <span className="fin-emoji" aria-hidden="true">{p.emoji}</span>
+              <span className="fin-name">{p.name}</span>
+              <span className="fin-arrow" aria-hidden="true">→</span>
+            </div>
+            <div className="fin-value">{p.value}</div>
+            <div className={`fin-note${p.alert ? ' alert' : ''}`}>{p.note}</div>
+          </div>
+        ))}
       </div>
       <div className="offer-banner">
         <div>
