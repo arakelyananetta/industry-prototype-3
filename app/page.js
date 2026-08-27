@@ -39,6 +39,18 @@ export default function Page() {
   const heroAsk = useRef(null)
   const assistRef = useRef(null)
   const [assistVisible, setAssistVisible] = useState(false)
+  const [chatKey, setChatKey] = useState(0)
+
+  /* «Новый чат»: чистый диалог с ассистентом на главной */
+  const newChat = () => {
+    setChatKey((k) => k + 1)
+    setActive('home')
+    setSideOpen(false)
+    setTimeout(() => {
+      assistRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      assistRef.current?.querySelector('input')?.focus()
+    }, 120)
+  }
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' && localStorage.getItem('theme')
@@ -154,16 +166,18 @@ export default function Page() {
         {/* ── Сайдбар ── */}
         {sideOpen && <div className="side-backdrop" onClick={() => setSideOpen(false)} />}
         <aside className={`sidebar${sideOpen ? ' open' : ''}`}>
-          {/* инструменты: уведомления, поддержка и тема — здесь, а не в шапке */}
-          <div className="side-tools">
-            <button className="side-item" onClick={() => { setNotifOpen(true); setSideOpen(false) }}>
+          {/* инструменты одной строкой (как в Notion): уведомления, поддержка, тема */}
+          <div className="side-tools-row">
+            <button className="tool-ic" onClick={() => { setNotifOpen(true); setSideOpen(false) }} aria-label="Уведомления">
               {icons.bell}
-              Уведомления
-              {!notifRead && <span className="badge">4</span>}
+              {!notifRead && <span className="dot" />}
             </button>
-            <button className="side-item" onClick={() => { openChat(); setSideOpen(false) }}>
+            <button className="tool-ic" onClick={() => { openChat(); setSideOpen(false) }} aria-label="Чат с поддержкой">
               {icons.chat}
-              Чат с поддержкой
+            </button>
+            <button className="theme-switch" onClick={toggleTheme} aria-label="Переключить тему">
+              <span className={theme === 'light' ? 'on' : ''}>{icons.sun}</span>
+              <span className={`moon${theme === 'dark' ? ' on' : ''}`}>{icons.moon}</span>
             </button>
           </div>
           {NAV.map((group, gi) => (
@@ -178,12 +192,11 @@ export default function Page() {
               ))}
             </div>
           ))}
-          {/* тема — в самом низу меню, под «Прочее» */}
+          {/* новый чат с ассистентом — в самом низу меню */}
           <div className="side-bottom">
-            <button className="side-item" onClick={toggleTheme}>
-              {icons.moon}
-              Тёмная тема
-              <span className={`toggle${theme === 'dark' ? ' on' : ''}`} style={{ marginLeft: 'auto', transform: 'scale(.82)' }} aria-hidden="true" />
+            <button className="new-chat" onClick={newChat}>
+              {icons.plus}
+              Новый чат
             </button>
           </div>
         </aside>
@@ -220,7 +233,7 @@ export default function Page() {
                   <p>Спросите о вашем бизнесе своими словами — отвечу и сразу предложу действие.</p>
                 </div>
                 <div className="home-query">
-                  <QueryBar hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
+                  <QueryBar key={chatKey} hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
                 </div>
               </section>
 
