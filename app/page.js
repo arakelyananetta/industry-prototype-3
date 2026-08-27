@@ -1,13 +1,17 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { icons, fmt, Ic, FormModal, ClientName, QueryBar } from './ui'
+import { icons, fmt, Ic, FormModal, ClientName, QueryBar, Spark } from './ui'
 import { Section } from './sections'
 import { HOME_HINT } from './answers'
 import {
   NAV, CLIENTS, ORDERS, SEG_LABEL, TASKS_FULL,
-  NOTIFS, PROFILE, SUPPORT_GREETING, SUPPORT_REPLIES,
+  NOTIFS, PROFILE, SUPPORT_GREETING, SUPPORT_REPLIES, HOME_DASH,
 } from './data'
+
+/* подписи времени для дашбордов «сегодня»: 8:00 → 20:30 */
+const DAY_LABELS = Array.from({ length: 26 }, (_, i) => `${8 + Math.floor(i / 2)}:${i % 2 ? '30' : '00'}`)
+const DASH_COLOR = { up: '#26a95c', down: '#e30611', warn: '#8F8FFF' }
 
 export default function Page() {
   const [theme, setTheme] = useState('light')
@@ -191,11 +195,37 @@ export default function Page() {
             <Section id={active} ctx={ctx} />
           ) : (
             <div className="home-panel">
-              <div className="welcome">
-                <h1>Добро пожаловать, Виталий!</h1>
-                <p>Спросите о вашем бизнесе своими словами.</p>
-              </div>
-              <QueryBar hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
+              <section className="home-hero">
+                <div className="welcome">
+                  <h1>Задайте любой вопрос</h1>
+                  <p>Виталий, я знаю всё о вашей пекарне — спросите своими словами.</p>
+                </div>
+                <div className="home-query">
+                  <QueryBar hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
+                </div>
+                <button className="hero-scroll"
+                  onClick={() => document.querySelector('.home-dash')?.scrollIntoView({ behavior: 'smooth' })}>
+                  Что с моим бизнесом сегодня? <span aria-hidden="true">↓</span>
+                </button>
+              </section>
+              <section className="home-dash">
+                <h2>Что с моим бизнесом сегодня?</h2>
+                <p className="home-dash-sub">Шесть главных ответов — и понятное действие к каждому.</p>
+                <div className="dash-grid">
+                  {HOME_DASH.map((d) => (
+                    <div key={d.title} className="card dash-card">
+                      <div className="dash-top">
+                        <span className="dash-title">{d.title}</span>
+                        <span className={`dash-delta ${d.trend}`}>{d.delta}</span>
+                      </div>
+                      <div className="dash-value">{d.value}</div>
+                      <Spark series={d.series} labels={DAY_LABELS} color={DASH_COLOR[d.trend]} unit={d.unit} height={54} />
+                      <p className="dash-note">{d.note}</p>
+                      <button className="dash-cta" onClick={() => go(d.cta.to)}>{d.cta.label} →</button>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
           )}
         </main>
@@ -341,12 +371,12 @@ export default function Page() {
 
       {/* ── Заявка на бизнес-карту ── */}
       {cardForm && (
-        <FormModal title="Заказ бизнес-карты" sub="Кэшбэк до 3%, привязка к расчётному счёту"
+        <FormModal title="Заказ бизнес-карты" sub="Кэшбэк до 3%, привязана к деньгам бизнеса"
           fields={[
             { label: 'Имя на карте', value: 'VITALIY SIVANEV' },
             { label: 'Тип карты', type: 'select', options: ['Виртуальная (мгновенно)', 'Пластиковая (доставка 2–3 дня)'] },
           ]}
-          submitLabel="Заказать" successText="Карта выпущена! Виртуальная карта уже доступна в разделе «Счета и платежи»."
+          submitLabel="Заказать" successText="Карта выпущена! Виртуальная карта уже доступна в разделе «Бизнес-карта»."
           onClose={() => setCardForm(false)} ping={ping} />
       )}
 

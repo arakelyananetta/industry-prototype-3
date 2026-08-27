@@ -55,6 +55,8 @@ export const icons = {
   phone: <Ic size={22}><path d="M5 4.5h4l1.5 4-2 1.5a12 12 0 0 0 5.5 5.5l1.5-2 4 1.5v4c-8.5.5-15-6-14.5-14.5z" /></Ic>,
   people: <Ic size={22}><circle cx="9" cy="8.5" r="3" /><path d="M3.8 19.5c.5-2.9 2.6-4.6 5.2-4.6s4.7 1.7 5.2 4.6" /><circle cx="16.8" cy="9.5" r="2.4" /><path d="M16 14.9c2.2.1 3.9 1.6 4.3 4" /></Ic>,
   person: <Ic size={22}><circle cx="12" cy="8" r="3.4" /><path d="M5.5 20c.7-3.4 3.2-5.4 6.5-5.4s5.8 2 6.5 5.4" /></Ic>,
+  mail: <Ic><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" /><path d="m4.5 7.5 7.5 6 7.5-6" /></Ic>,
+  calendar: <Ic><rect x="4" y="5.5" width="16" height="15" rx="2.5" /><path d="M4 10h16M8.5 3.5v3.5M15.5 3.5v3.5" /><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" /></Ic>,
 }
 
 /* ── график со значением по наведению ── */
@@ -253,7 +255,6 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
 
   const inputRow = (
     <div className={`query-input-row${hero ? '' : ' compact'}`}>
-      {icons.spark}
       <input
         value={val}
         onChange={(e) => setVal(e.target.value)}
@@ -285,6 +286,14 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
             </div>
           ))}
           {typing && <div className="qa-typing">Анализирую данные вашего бизнеса<i>.</i><i>.</i><i>.</i></div>}
+        </div>
+      )}
+      {hero && !chatMode && hint.chipsTop?.length > 0 && (
+        <div className="query-chips top">
+          {hint.chipsTop.map((c) => {
+            const label = typeof c === 'string' ? c : c.label
+            return <button key={label} className="query-chip" onClick={() => chipClick(c)}>{label}</button>
+          })}
         </div>
       )}
       {hero ? (

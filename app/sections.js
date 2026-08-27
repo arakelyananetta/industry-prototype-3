@@ -7,6 +7,7 @@ import {
   TXS, TERMINALS, GUARANTEES, TAX_EVENTS, DEPOSIT_PRODUCTS, DOCS,
   REVENUE_SERIES, GROWTH_ACTIONS, KPIS, PROMOS, SERVICES,
   CHANNELS, GOALS, CITIES,
+  MAIL_PROVIDERS, MAIL_INBOX, MAX_CHATS, CAL_PROVIDERS, CAL_EVENTS,
 } from './data'
 
 const chip = ([label, cls], key) => <span key={key || label} className={`chip ${cls}`}>{label}</span>
@@ -260,7 +261,7 @@ function Comms({ ctx }) {
   const p = usePeriod('month')
   const pi = periodInfo(p)
   return (
-    <SectionShell title="Коммуникации" sub="SMS, Push и Email-рассылки по сегментам клиентов" ctx={ctx}
+    <SectionShell title="Рассылки" sub="SMS, Push и Email-рассылки по сегментам клиентов" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Создать рассылку</button>}>
       <TimeFilter p={p} withToday />
       <StatRow labels={pi.labels} stats={[
@@ -737,12 +738,12 @@ function Premium({ ctx }) {
   const [bill, setBill] = useState('month')
   const yearly = (m) => Math.round(m * 0.9)
   const PLANS = [
-    { name: 'Старт', m: 299, feats: ['20 бесплатных платежей в месяц', 'Кэшбэк 1% по бизнес-карте', 'Базовая аналитика продаж', '50 запросов ассистенту в месяц'], cta: 'Перейти на Старт' },
-    { name: 'Премиум', m: 990, current: true, feats: ['Безлимитные платежи внутри МТС Бизнес', 'Кэшбэк 3% по бизнес-карте', 'Полная аналитика и профиль клиента', 'Ассистент без ограничений', '+1 п.п. к ставке депозитов', 'Приоритетная поддержка 24/7'], cta: 'Ваш тариф' },
+    { name: 'Старт', m: 299, feats: ['20 бесплатных переводов в месяц', 'Кэшбэк 1% по бизнес-карте', 'Базовая аналитика продаж', '50 запросов ассистенту в месяц'], cta: 'Перейти на Старт' },
+    { name: 'Премиум', m: 990, current: true, feats: ['Безлимитные переводы внутри МТС Бизнес', 'Кэшбэк 3% по бизнес-карте', 'Полная аналитика и профиль клиента', 'Ассистент без ограничений', '+1 п.п. к доходу накоплений', 'Приоритетная поддержка 24/7'], cta: 'Ваш тариф' },
     { name: 'Максимум', m: 2990, feats: ['Всё из «Премиум»', 'Персональный менеджер', 'Кэшбэк 5% и скидка 20% на кампании', 'API и интеграции с 1С', 'До 5 сотрудников в кабинете'], cta: 'Перейти на Максимум' },
   ]
   return (
-    <SectionShell title="Премиум подписка" sub="Подписка на сервисы МТС Бизнес: платежи, аналитика, ассистент и кэшбэк" ctx={ctx}>
+    <SectionShell title="Премиум подписка" sub="Подписка на сервисы МТС Бизнес: переводы, аналитика, ассистент и кэшбэк" ctx={ctx}>
       <div className="offer-banner purple">
         <div>
           <b>Ваша подписка: Премиум <span className="chip green" style={{ marginLeft: 8 }}>Активна</span></b>
@@ -790,7 +791,7 @@ function Premium({ ctx }) {
       <div className="card" style={{ marginTop: 18 }}>
         <h3 className="block-title" style={{ fontSize: 16 }}>Условия подписки</h3>
         <ul className="promo-list" style={{ maxWidth: 'none' }}>
-          <li><span className="check">✓</span>Списание ежемесячно или раз в год с расчётного счёта; при оплате за год — скидка 10%.</li>
+          <li><span className="check">✓</span>Списание ежемесячно или раз в год из денег бизнеса; при оплате за год — скидка 10%.</li>
           <li><span className="check">✓</span>Сменить тариф можно в любой момент — перерасчёт со следующего платёжного периода.</li>
           <li><span className="check">✓</span>Отмена без штрафов: доступ сохраняется до конца оплаченного периода.</li>
           <li><span className="check">✓</span>Кэшбэк начисляется баллами и тратится на комиссии, кампании и сервисы МТС.</li>
@@ -906,11 +907,11 @@ function Services({ ctx }) {
 function Payments({ ctx }) {
   const [form, setForm] = useState(false)
   return (
-    <SectionShell title="Счета и платежи" sub="Расчётный счёт и движение средств" ctx={ctx}
-      actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Создать платёж</button>}>
+    <SectionShell title="Финансы" sub="Деньги бизнеса и движение средств" ctx={ctx}
+      actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Новый перевод</button>}>
       <div className="balance-card">
         <div>
-          <div className="b-label">Расчётный счёт · 40802…3456</div>
+          <div className="b-label">Деньги бизнеса · …3456</div>
           <div className="b-sum">2 456 780 ₽</div>
           <div className="b-sub">+ 129 040 ₽ за неделю</div>
         </div>
@@ -936,14 +937,14 @@ function Payments({ ctx }) {
           ))}
         </div>
       </div>
-      {form && <FormModal title="Новый платёж" sub="Рублёвый перевод юрлицу или ИП"
+      {form && <FormModal title="Новый перевод" sub="Рублёвый перевод компании или ИП"
         fields={[
           { label: 'Получатель', placeholder: 'Название организации или ИП' },
           { label: 'ИНН получателя', placeholder: '10 или 12 цифр' },
           { label: 'Сумма, ₽', placeholder: '0,00' },
-          { label: 'Назначение платежа', type: 'textarea', placeholder: 'Оплата по счёту №…' },
+          { label: 'Назначение перевода', type: 'textarea', placeholder: 'Оплата по документу №…' },
         ]}
-        submitLabel="Отправить платёж" successText="Платёж подписан и отправлен."
+        submitLabel="Отправить перевод" successText="Перевод подписан и отправлен."
         onClose={() => setForm(false)} ping={ctx.ping} />}
     </SectionShell>
   )
@@ -966,7 +967,7 @@ function Cards({ ctx }) {
     }
   }
   return (
-    <SectionShell title="Карты" sub="Бизнес-карты, привязанные к расчётному счёту" ctx={ctx}
+    <SectionShell title="Бизнес-карта" sub="Карта для трат бизнеса — привязана к вашим деньгам" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.go('card-form')}>+ Выпустить карту</button>}>
       <div className="cards-layout">
         <div className="bank-card-wrap">
@@ -1024,7 +1025,7 @@ function Cards({ ctx }) {
             {chip(frozen ? ['Заморожена', 'blue'] : ['Активна', 'green'])}
           </div>
           <div className="profile-grid" style={{ marginTop: 14 }}>
-            <div className="profile-row"><span className="k">Привязана к счёту</span><span className="v">40802 810 3 0000 0123456</span></div>
+            <div className="profile-row"><span className="k">Привязана к деньгам бизнеса</span><span className="v">…0123456</span></div>
             <div className="profile-row"><span className="k">Лимит на месяц</span><span className="v">500 000 ₽ · потрачено 118 400 ₽</span></div>
             <div className="profile-row"><span className="k">Кэшбэк</span><span className="v">3% на всё · 3 552 ₽ за август</span></div>
           </div>
@@ -1052,7 +1053,7 @@ function Acquiring({ ctx }) {
   const p = usePeriod('month')
   const pi = periodInfo(p)
   return (
-    <SectionShell title="Эквайринг" sub="Приём оплат картами и по QR-коду" ctx={ctx}
+    <SectionShell title="Приём оплаты" sub="Оплата картами и по QR-коду в вашей пекарне" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Подключить терминал</button>}>
       <TimeFilter p={p} withToday />
       <StatRow labels={pi.labels} stats={[
@@ -1070,7 +1071,7 @@ function Acquiring({ ctx }) {
       />
       <div className="card" style={{ marginTop: 18 }}>
         <h3 className="block-title" style={{ fontSize: 16 }}>Зачисление выручки</h3>
-        <p className="block-sub">Деньги от карт приходят на счёт на следующее утро до 08:00. Комиссия списывается автоматически.</p>
+        <p className="block-sub">Деньги от карт приходят к вам на следующее утро до 08:00. Комиссия списывается автоматически.</p>
         <button className="btn-gray" style={{ width: 'auto', marginTop: 12 }} onClick={() => ctx.go('payments')}>Смотреть зачисления →</button>
       </div>
       {form && <FormModal title="Подключение терминала" sub="Установка за 2 рабочих дня"
@@ -1092,19 +1093,19 @@ function Credits({ ctx }) {
   const r = 0.115 / 12
   const pay = Math.round((sum * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1))
   return (
-    <SectionShell title="Кредиты" sub="Финансирование для развития пекарни" ctx={ctx}>
+    <SectionShell title="Деньги на развитие" sub="Финансирование для роста пекарни" ctx={ctx}>
       <div className="offer-banner">
         <div>
-          <b>Вам одобрена кредитная линия на 3 000 000 ₽</b>
-          <p>Ставка от 11,5% годовых · решение уже готово · предложение действует 14 дней</p>
+          <b>Вам одобрено 3 000 000 ₽ на развитие</b>
+          <p>От 11,5% годовых · решение уже готово · предложение действует 14 дней</p>
         </div>
         <button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>Получить деньги</button>
       </div>
       <div className="two-col">
         <div className="card">
-          <h3 className="block-title" style={{ fontSize: 16 }}>Кредитный калькулятор</h3>
+          <h3 className="block-title" style={{ fontSize: 16 }}>Калькулятор платежа</h3>
           <div className="calc-row">
-            <label>Сумма кредита <b>{fmt(sum)} ₽</b></label>
+            <label>Сумма <b>{fmt(sum)} ₽</b></label>
             <input type="range" min="100000" max="10000000" step="100000" value={sum} onChange={(e) => setSum(+e.target.value)} />
           </div>
           <div className="calc-row">
@@ -1116,14 +1117,14 @@ function Credits({ ctx }) {
             <div className="s-val">{fmt(pay)} ₽</div>
             <div className="s-sub">Переплата: {fmt(pay * months - sum)} ₽ за весь срок</div>
           </div>
-          <button className="btn-red" onClick={() => setForm(true)}>Оформить кредит</button>
+          <button className="btn-red" onClick={() => setForm(true)}>Получить деньги</button>
         </div>
         <div className="card">
-          <h3 className="block-title" style={{ fontSize: 16 }}>Действующие кредиты</h3>
-          <p className="block-sub" style={{ marginBottom: 10 }}>У вас 1 активный кредит</p>
+          <h3 className="block-title" style={{ fontSize: 16 }}>Текущее финансирование</h3>
+          <p className="block-sub" style={{ marginBottom: 10 }}>У вас 1 действующая программа</p>
           <div className="tx-row" style={{ cursor: 'default' }}>
             <div>
-              <div className="tx-name">Кредит на оборудование · печь Miwe</div>
+              <div className="tx-name">Финансирование оборудования · печь Miwe</div>
               <div className="tx-desc">Выдан 10.02.2024 · ставка 12,8% · платёж 43 250 ₽/мес</div>
             </div>
             <div className="tx-right">
@@ -1134,14 +1135,14 @@ function Credits({ ctx }) {
           <div className="calc-result" style={{ marginTop: 14 }}>
             <div className="s-label">Следующий платёж</div>
             <div className="s-val">43 250 ₽ · 10 сентября</div>
-            <div className="s-sub">Спишется автоматически с расчётного счёта</div>
+            <div className="s-sub">Спишется автоматически из денег бизнеса</div>
           </div>
           <button className="btn-gray" onClick={() => ctx.ping('Досрочное погашение — в разработке')}>Погасить досрочно</button>
         </div>
       </div>
-      {form && <FormModal title="Заявка на кредит" sub={`Сумма ${fmt(sum)} ₽ на ${months} мес. · платёж ~${fmt(pay)} ₽`}
+      {form && <FormModal title="Заявка на деньги для развития" sub={`Сумма ${fmt(sum)} ₽ на ${months} мес. · платёж ~${fmt(pay)} ₽`}
         fields={[
-          { label: 'Цель кредита', type: 'select', options: ['Оборотные средства', 'Оборудование', 'Ремонт и расширение', 'Маркетинг'] },
+          { label: 'На что нужны деньги', type: 'select', options: ['Оборотные средства', 'Оборудование', 'Ремонт и расширение', 'Маркетинг'] },
           { label: 'Телефон для связи', value: '+7 (977) 945-88-90' },
         ]}
         submitLabel="Отправить заявку" successText="Заявка отправлена! Решение придёт в течение 1 рабочего дня."
@@ -1157,13 +1158,13 @@ function Deposits({ ctx }) {
   const [form, setForm] = useState(null)
   const income = Math.round(sum * 0.18 * (months / 12))
   return (
-    <SectionShell title="Депозиты" sub="Свободные деньги бизнеса должны работать" ctx={ctx}>
+    <SectionShell title="Накопления" sub="Свободные деньги бизнеса должны работать" ctx={ctx}>
       <div className="offer-banner purple">
         <div>
-          <b>Сегодня +1,5% к ставке срочного депозита</b>
-          <p>Разместите средства до конца дня и получите до 19,5% годовых</p>
+          <b>Сегодня +1,5% к «Доходу на срок»</b>
+          <p>Отложите деньги до конца дня и получайте до 19,5% годовых</p>
         </div>
-        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => setForm('Срочный депозит')}>Открыть сегодня</button>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => setForm('Доход на срок')}>Открыть сегодня</button>
       </div>
       <div className="seg-grid three">
         {DEPOSIT_PRODUCTS.map((d) => (
@@ -1182,7 +1183,7 @@ function Deposits({ ctx }) {
       <div className="card" style={{ marginTop: 18 }}>
         <h3 className="block-title" style={{ fontSize: 16 }}>Калькулятор дохода</h3>
         <div className="calc-row">
-          <label>Сумма размещения <b>{fmt(sum)} ₽</b></label>
+          <label>Сколько отложить <b>{fmt(sum)} ₽</b></label>
           <input type="range" min="100000" max="5000000" step="100000" value={sum} onChange={(e) => setSum(+e.target.value)} />
         </div>
         <div className="calc-row">
@@ -1192,15 +1193,15 @@ function Deposits({ ctx }) {
         <div className="calc-result">
           <div className="s-label">Доход по ставке 18% годовых</div>
           <div className="s-val">+{fmt(income)} ₽</div>
-          <div className="s-sub">Проценты выплачиваются ежемесячно на расчётный счёт</div>
+          <div className="s-sub">Доход приходит ежемесячно к деньгам бизнеса</div>
         </div>
       </div>
-      {form && <FormModal title={`Открытие: ${form}`} sub="Деньги спишутся с расчётного счёта"
+      {form && <FormModal title={`Открытие: ${form}`} sub="Деньги перейдут из свободных средств бизнеса"
         fields={[
           { label: 'Сумма, ₽', value: fmt(sum) },
           { label: 'Срок', type: 'select', options: ['3 месяца', '6 месяцев', '12 месяцев'] },
         ]}
-        submitLabel="Открыть депозит" successText="Депозит открыт! Проценты начнут начисляться с завтрашнего дня."
+        submitLabel="Открыть накопления" successText="Накопления открыты! Доход начнёт начисляться с завтрашнего дня."
         onClose={() => setForm(null)} ping={ctx.ping} />}
     </SectionShell>
   )
@@ -1210,7 +1211,7 @@ function Deposits({ ctx }) {
 function Guarantees({ ctx }) {
   const [form, setForm] = useState(false)
   return (
-    <SectionShell title="Гарантии" sub="Банковские гарантии для тендеров и договоров" ctx={ctx}
+    <SectionShell title="Гарантии для сделок" sub="Гарантии для тендеров и договоров" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Оформить гарантию</button>}>
       <StatRow stats={[
         ['Действующих гарантий', '2', 'на 1 540 000 ₽'],
@@ -1223,7 +1224,7 @@ function Guarantees({ ctx }) {
         rows={GUARANTEES.map((g) => [<b>{g.no}</b>, g.purpose, g.sum, g.till, chip(g.status)])}
         onRow={() => ctx.go('documents')}
       />
-      {form && <FormModal title="Заявка на банковскую гарантию" sub="Онлайн-выпуск от 1 рабочего дня"
+      {form && <FormModal title="Заявка на гарантию" sub="Онлайн-выпуск от 1 рабочего дня"
         fields={[
           { label: 'Тип гарантии', type: 'select', options: ['Участие в тендере (44-ФЗ)', 'Исполнение контракта', 'Обеспечение аренды', 'Возврат аванса'] },
           { label: 'Сумма гарантии, ₽', placeholder: '0' },
@@ -1239,10 +1240,10 @@ function Guarantees({ ctx }) {
 function Accounting({ ctx }) {
   const [form, setForm] = useState(false)
   return (
-    <SectionShell title="Бухгалтерия" sub="Налоги и отчётность ИП на УСН 6%" ctx={ctx}
+    <SectionShell title="Налоги и отчётность" sub="Все налоги ИП на УСН 6% — под контролем" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>Оплатить налог</button>}>
       <StatRow stats={[
-        ['Доход за 2 квартал', '3 112 500 ₽', 'по данным счёта'],
+        ['Доход за 2 квартал', '3 112 500 ₽', 'по данным ваших финансов'],
         ['Налог УСН 6%', '18 675 ₽', 'к оплате до 25.08'],
         ['Взносы «за себя»', '49 500 ₽/год', 'оплачено 50%'],
         ['Отчётность', 'Сдана', 'за 1 полугодие'],
@@ -1264,7 +1265,7 @@ function Accounting({ ctx }) {
       <div className="two-col">
         <div className="card">
           <h3 className="block-title" style={{ fontSize: 16 }}>Онлайн-бухгалтерия</h3>
-          <p className="block-sub">МТС Бизнес сам считает налог по операциям на счёте, готовит платёжки и напоминает о сроках.</p>
+          <p className="block-sub">МТС Бизнес сам считает налог по вашим операциям, готовит документы на оплату и напоминает о сроках.</p>
           <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.ping('Онлайн-бухгалтерия уже подключена на вашем тарифе')}>Подключено ✓</button>
         </div>
         <div className="card">
@@ -1280,7 +1281,7 @@ function Accounting({ ctx }) {
       {form && <FormModal title="Оплата налога УСН" sub="Авансовый платёж за 2 квартал 2026"
         fields={[
           { label: 'Сумма, ₽', value: '18 675' },
-          { label: 'Списать со счёта', type: 'select', options: ['Расчётный счёт · 40802…3456'] },
+          { label: 'Откуда списать', type: 'select', options: ['Деньги бизнеса · …3456'] },
         ]}
         submitLabel="Оплатить" successText="Платёж в ФНС отправлен. Квитанция появится в «Документах»."
         onClose={() => setForm(false)} ping={ctx.ping} />}
@@ -1294,7 +1295,7 @@ function Documents({ ctx }) {
   const [form, setForm] = useState(false)
   const list = DOCS.filter((d) => (d.name + d.type).toLowerCase().includes(q.toLowerCase()))
   return (
-    <SectionShell title="Документы" sub="Выписки, договоры и справки по вашему счёту" ctx={ctx}
+    <SectionShell title="Документы" sub="Отчёты, договоры и справки по вашему бизнесу" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>Запросить справку</button>}>
       <div className="crm-controls">
         <div className="input-search">
@@ -1314,7 +1315,7 @@ function Documents({ ctx }) {
       {list.length === 0 && <p className="empty-note">Документы по запросу «{q}» не найдены.</p>}
       {form && <FormModal title="Запрос справки" sub="Готовим в течение 1 рабочего дня"
         fields={[
-          { label: 'Тип справки', type: 'select', options: ['Об оборотах по счёту', 'О наличии счёта', 'Об отсутствии задолженности', 'Для визы'] },
+          { label: 'Тип справки', type: 'select', options: ['Об оборотах бизнеса', 'О подключённых финансах', 'Об отсутствии задолженности', 'Для визы'] },
           { label: 'Период', type: 'select', options: ['Последние 3 месяца', 'Последние 6 месяцев', 'Текущий год', '2024 год'] },
         ]}
         submitLabel="Запросить" successText="Справка заказана — появится в списке документов."
@@ -1424,10 +1425,222 @@ function Tasks({ ctx }) {
   )
 }
 
+/* ═══ Подключение сервисов: экран «подключите — и работайте прямо из кабинета» ═══ */
+function ConnectGate({ title, desc, providers, onConnect }) {
+  return (
+    <div className="card connect-gate">
+      <h3 className="block-title" style={{ fontSize: 16 }}>{title}</h3>
+      <p className="block-sub">{desc}</p>
+      <div className="provider-grid">
+        {providers.map((p) => (
+          <button key={p.id} className="provider" onClick={() => onConnect(p)}>
+            <span className="provider-emoji" aria-hidden="true">{p.emoji || '📆'}</span>
+            <b>{p.name}</b>
+            <span className="provider-link">Подключить →</span>
+          </button>
+        ))}
+      </div>
+      <p className="connect-note">Подключение занимает пару минут: войдите в аккаунт и разрешите доступ. Отключить можно в любой момент в «Настройках».</p>
+    </div>
+  )
+}
+
+/* ═══ Работа с почтой ═══ */
+function Mail({ ctx }) {
+  const [connected, setConnected] = useState(null)
+  const [visibleUnreadOnly, setUnreadOnly] = useState(false)
+  const list = visibleUnreadOnly ? MAIL_INBOX.filter((m) => m.unread) : MAIL_INBOX
+  return (
+    <SectionShell title="Работа с почтой" sub="Письма клиентов и поставщиков — прямо в кабинете, с помощью ассистента" ctx={ctx}
+      actions={connected && <button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.ping('Черновик письма создан — ассистент подставил данные из CRM (демо)')}>+ Написать письмо</button>}>
+      {!connected ? (
+        <ConnectGate
+          title="Подключите почту к кабинету"
+          desc="Все письма о заказах, оплатах и аренде — в одном месте. Ассистент подскажет, какие письма важные, и подготовит черновики ответов."
+          providers={MAIL_PROVIDERS}
+          onConnect={(p) => { setConnected(p); ctx.ping(`${p.name} подключена — письма загружены`) }}
+        />
+      ) : (
+        <>
+          <StatRow stats={[
+            ['Новые письма', '3', 'ждут ответа'],
+            ['Ответ ассистентом', '2 черновика', 'готовы к отправке'],
+            ['Писем за неделю', '26', '+4 к прошлой'],
+            ['Среднее время ответа', '1,4 часа', 'быстрее 70% пекарен'],
+          ]} />
+          <div className="chips-row" style={{ marginTop: 14 }}>
+            <button className={`filter-chip${!visibleUnreadOnly ? ' active' : ''}`} onClick={() => setUnreadOnly(false)}>Все письма</button>
+            <button className={`filter-chip${visibleUnreadOnly ? ' active' : ''}`} onClick={() => setUnreadOnly(true)}>Непрочитанные</button>
+            <span className="chip green" style={{ marginLeft: 'auto', alignSelf: 'center' }}>{connected.name} подключена</span>
+          </div>
+          <div className="card" style={{ marginTop: 14 }}>
+            {list.map((m) => (
+              <div key={m.subj} className={`mail-row${m.unread ? ' unread' : ''}`}
+                onClick={() => ctx.ping('Ассистент подготовил черновик ответа — проверьте и отправьте (демо)')}>
+                <div className="mail-main">
+                  <div className="mail-from">{m.from} {m.unread && <span className="notif-unread" style={{ display: 'inline-block', marginLeft: 6 }} />}</div>
+                  <div className="mail-subj">{m.subj}</div>
+                  <div className="mail-preview">{m.preview}</div>
+                </div>
+                <div className="mail-side">
+                  <span className={`chip ${m.tag[1]}`}>{m.tag[0]}</span>
+                  <span className="tx-date">{m.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{ marginTop: 18 }}>
+            <h3 className="block-title" style={{ fontSize: 16 }}>Ассистент уже разобрал почту</h3>
+            <ul className="promo-list" style={{ maxWidth: 'none', marginTop: 12 }}>
+              <li><span className="check">✓</span>«Праздник-Кейтеринг» ждёт подтверждения меню — черновик ответа готов, осталось нажать «Отправить».</li>
+              <li><span className="check">✓</span>Оплата муки — до 28 августа. Могу создать перевод на 34 120 ₽ прямо сейчас.</li>
+              <li><span className="check">✓</span>Анетта просит «Медовик» к субботе — на кухне свободное окно в пятницу, можно подтверждать.</li>
+            </ul>
+          </div>
+        </>
+      )}
+    </SectionShell>
+  )
+}
+
+/* ═══ Работа с MAX ═══ */
+function Max({ ctx }) {
+  const [connected, setConnected] = useState(false)
+  return (
+    <SectionShell title="Работа с MAX" sub="Переписка с клиентами и командой в мессенджере — не выходя из кабинета" ctx={ctx}
+      actions={connected && <button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.go('comms')}>Рассылка в MAX</button>}>
+      {!connected ? (
+        <ConnectGate
+          title="Подключите MAX к кабинету"
+          desc="Клиенты пишут о заказах в мессенджере — отвечайте прямо отсюда. Заказы из переписки сами попадают в CRM, а ассистент подсказывает ответы."
+          providers={[{ id: 'max', name: 'MAX мессенджер', emoji: '💬' }]}
+          onConnect={() => { setConnected(true); ctx.ping('MAX подключён — чаты загружены') }}
+        />
+      ) : (
+        <>
+          <StatRow stats={[
+            ['Непрочитанные', '3', 'в 2 чатах'],
+            ['Чатов с клиентами', '48', '+6 за неделю'],
+            ['Заказы из MAX', '31 за месяц', '≈14 200 ₽ выручки'],
+            ['Скорость ответа', '4 мин', 'клиенты это ценят'],
+          ]} />
+          <div className="card" style={{ marginTop: 18 }}>
+            <div className="list-head">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Чаты</h3>
+              <span className="chip green">MAX подключён</span>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              {MAX_CHATS.map((c) => (
+                <div key={c.name} className="tx-row" onClick={() => ctx.ping('Ассистент предложил ответ — отредактируйте и отправьте (демо)')}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', minWidth: 0 }}>
+                    <div className="avatar">{c.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</div>
+                    <div style={{ minWidth: 0 }}>
+                      <div className="tx-name"><ClientName name={c.name} /></div>
+                      <div className="tx-desc" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.last}</div>
+                    </div>
+                  </div>
+                  <div className="tx-right">
+                    {c.unread > 0 && <span className="badge-count">{c.unread}</span>}
+                    <div className="tx-date">{c.time}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="two-col">
+            <div className="card">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Заказы из переписки</h3>
+              <p className="block-sub">Ассистент распознаёт заказы в чатах и создаёт их в CRM автоматически.</p>
+              <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.go('orders')}>Смотреть заказы →</button>
+            </div>
+            <div className="card">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Рассылки в MAX</h3>
+              <p className="block-sub">Отправляйте акции сегментам клиентов прямо в мессенджер — открываемость выше SMS.</p>
+              <button className="btn-purple" style={{ marginTop: 12 }} onClick={() => ctx.go('comms')}>Создать рассылку</button>
+            </div>
+          </div>
+        </>
+      )}
+    </SectionShell>
+  )
+}
+
+/* ═══ Календарь ═══ */
+function CalendarSec({ ctx }) {
+  const [connected, setConnected] = useState(null)
+  const [form, setForm] = useState(false)
+  return (
+    <SectionShell title="Календарь" sub="Все дела бизнеса — заказы, встречи и налоги — в одном расписании" ctx={ctx}
+      actions={connected && <button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Добавить дело</button>}>
+      {!connected ? (
+        <ConnectGate
+          title="Подключите календарь телефона или компьютера"
+          desc="События из вашего календаря объединятся с делами кабинета: заказы, налоговые сроки и задачи появятся в одном расписании и будут синхронизироваться в обе стороны."
+          providers={CAL_PROVIDERS}
+          onConnect={(p) => { setConnected(p); ctx.ping(`${p.name} подключён — расписание синхронизировано`) }}
+        />
+      ) : (
+        <>
+          <StatRow stats={[
+            ['Дел сегодня', '4', 'ближайшее в 10:00'],
+            ['На этой неделе', '11', '3 связаны с заказами'],
+            ['Важный срок', 'Налог УСН', '25 августа'],
+            ['Синхронизация', 'Включена', connected.name],
+          ]} />
+          <div className="card" style={{ marginTop: 18 }}>
+            <div className="list-head">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Расписание</h3>
+              <span className="chip green">Синхронизировано с {connected.name}</span>
+            </div>
+            {CAL_EVENTS.map((day) => (
+              <div key={day.day} style={{ marginTop: 14 }}>
+                <div className="cal-day-label">{day.day}</div>
+                {day.items.map((e) => (
+                  <div key={e.title} className="tx-row" onClick={() => ctx.ping('Дело открыто — можно перенести или отметить выполненным (демо)')}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'baseline', minWidth: 0 }}>
+                      <span className="cal-time">{e.time}</span>
+                      <span className="tx-name" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.title}</span>
+                    </div>
+                    <span className={`chip ${e.kind[1]}`}>{e.kind[0]}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="two-col">
+            <div className="card">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Умные напоминания</h3>
+              <ul className="promo-list" style={{ maxWidth: 'none', marginTop: 12 }}>
+                <li><span className="check">✓</span>Напомню о налоге УСН за 3 дня до срока — и предложу оплатить в один клик.</li>
+                <li><span className="check">✓</span>Заказы с датой выдачи сами появляются в расписании кухни.</li>
+                <li><span className="check">✓</span>Задачи из раздела «Задачи» и события календаря — всегда в одном списке.</li>
+              </ul>
+            </div>
+            <div className="card">
+              <h3 className="block-title" style={{ fontSize: 16 }}>Задачи рядом</h3>
+              <p className="block-sub">Быстрые дела без времени удобнее вести в «Задачах» — они тоже видны в календаре.</p>
+              <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.go('tasks')}>Открыть задачи →</button>
+            </div>
+          </div>
+        </>
+      )}
+      {form && <FormModal title="Новое дело" sub={`Появится в расписании и в ${connected?.name || 'календаре'}`}
+        fields={[
+          { label: 'Название', placeholder: 'Например: дегустация новинок' },
+          { label: 'Дата и время', placeholder: '22.08, 15:00' },
+          { label: 'Напомнить', type: 'select', options: ['За 30 минут', 'За час', 'За день'] },
+        ]}
+        submitLabel="Добавить" successText="Дело добавлено и синхронизировано с вашим календарём."
+        onClose={() => setForm(false)} ping={ctx.ping} />}
+    </SectionShell>
+  )
+}
+
 const REGISTRY = {
   crm: Crm, orders: Orders, clients: Clients, segments: Segments, comms: Comms,
   analytics: Analytics, growth: Growth, promos: Promos, services: Services, premium: Premium,
   mkt: MktAnalytics, audience: Audience,
+  mail: Mail, max: Max, calendar: CalendarSec,
   payments: Payments, cards: Cards, acquiring: Acquiring,
   credits: Credits, deposits: Deposits, guarantees: Guarantees, accounting: Accounting,
   documents: Documents, settings: Settings, tasks: Tasks,
