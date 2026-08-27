@@ -113,7 +113,7 @@ export const ROLES = [
 export const KPIS = [
   { title: 'Активные клиенты', value: '892', delta: '+6% к июню', icon: 'people', me: 892, comp: 610, compText: '≈610', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: '', series: mkSeries(760, 892, 48, 14, 3) },
   { title: 'Уникальные покупатели', value: '1 034', delta: '+128 за июль', icon: 'person', me: 1034, comp: 780, compText: '≈780', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: '', series: mkSeries(906, 1034, 48, 16, 5) },
-  { title: 'Ретеншн · 30 дней', value: '42%', delta: '+4 п.п. к июню', icon: 'target', me: 42, comp: 27, compText: '27%', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: '%', series: mkSeries(36, 42, 48, 2, 7) },
+  { title: 'Возвращаются за 30 дней', value: '42%', delta: '+4 п.п. к июню', icon: 'target', me: 42, comp: 27, compText: '27%', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: '%', series: mkSeries(36, 42, 48, 2, 7) },
   { title: 'Частота покупок', value: '3,4 в мес.', delta: '+0,3 к июню', icon: 'orders', me: 3.4, comp: 2.1, compText: '2,1', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: '', series: mkSeries(29, 34, 48, 2, 9) },
   { title: 'Средний чек', value: '425 ₽', delta: '+7% к июню', icon: 'credits', me: 425, comp: 390, compText: '390 ₽', iconBg: '#D8D8FF', iconColor: '#8F8FFF', unit: ' ₽', series: mkSeries(388, 425, 48, 7, 11) },
 ]

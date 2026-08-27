@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { answerQuery, matchSection, NAV_LABELS, SECTION_HINTS } from './answers'
+import { answerQuery, matchSection, NAV_LABELS, SECTION_HINTS, TRANSFER, matchTransfer } from './answers'
 
 export const fmt = (n) => n.toLocaleString('ru-RU')
 
@@ -180,6 +180,8 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
   const [val, setVal] = useState('')
   const [ph, setPh] = useState(0)
   const [moreOpen, setMoreOpen] = useState(false)
+  const flowRef = useRef(null)
+  const [receiptOpen, setReceiptOpen] = useState(null)
   const bodyRef = useRef(null)
   const phs = hint.phs || (hint.ph ? [hint.ph] : ['Спросите о вашем бизнесе своими словами…'])
 
@@ -222,6 +224,34 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
     setVal('')
     setThread((t) => [...t, { q: text, a: null }])
     setTyping(true)
+    /* сценарий перевода: ждём сумму после вопроса «Сколько отправить?» */
+    if (flowRef.current === 'transfer') {
+      const num = parseFloat(text.replace(/\s/g, '').replace(/[^\d.,]/g, '').replace(',', '.'))
+      if (num > 0) {
+        setTimeout(() => {
+          setTyping(false)
+          flowRef.current = null
+          setThread((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, a: TRANSFER.done(Math.round(num)) } : x)))
+        }, 1200)
+        return
+      }
+      if (text.length <= 10) {
+        setTimeout(() => {
+          setTyping(false)
+          setThread((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, a: TRANSFER.retry } : x)))
+        }, 900)
+        return
+      }
+      flowRef.current = null /* пользователь передумал — отвечаем как на обычный вопрос */
+    }
+    if (!forceTo && matchTransfer(text)) {
+      flowRef.current = 'transfer'
+      setTimeout(() => {
+        setTyping(false)
+        setThread((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, a: TRANSFER.ask } : x)))
+      }, 1000)
+      return
+    }
     const nav = forceTo && onNavigate
       ? { id: forceTo, label: NAV_LABELS[forceTo] || '' }
       : onNavigate ? matchSection(text) : null
@@ -245,11 +275,33 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
     ask(chip.label, chip.to)
   }
 
-  const answerBody = (a) => (
+  const answerBody = (a, idx) => (
     <>
       {a.text}
       {a.cta && onNavigate && (
         <div><button className="qa-cta" onClick={() => onNavigate(a.cta.to)}>{a.cta.label}</button></div>
+      )}
+      {a.receipt && (
+        <>
+          <button className="receipt" onClick={() => setReceiptOpen((o) => (o === idx ? null : idx))}>
+            <span className="receipt-ico" aria-hidden="true">🧾</span>
+            <span className="receipt-body">
+              <b>Чек по переводу · {fmt(a.receipt.sum)} ₽</b>
+              <i>{receiptOpen === idx ? 'нажмите, чтобы свернуть' : 'нажмите, чтобы открыть'}</i>
+            </span>
+          </button>
+          {receiptOpen === idx && (
+            <div className="receipt-details">
+              <div className="rd-row"><span>Перевод</span><b>{a.receipt.no}</b></div>
+              <div className="rd-row"><span>Получатель</span><b>{a.receipt.to}</b></div>
+              <div className="rd-row"><span>Отправитель</span><b>{a.receipt.from}</b></div>
+              <div className="rd-row"><span>Сумма</span><b>{fmt(a.receipt.sum)} ₽</b></div>
+              <div className="rd-row"><span>Комиссия</span><b>0 ₽</b></div>
+              <div className="rd-row"><span>Когда</span><b>{a.receipt.date}</b></div>
+              <div className="rd-status">Исполнен ✓</div>
+            </div>
+          )}
+        </>
       )}
     </>
   )
@@ -283,7 +335,7 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
           {thread.map((x, i) => (
             <div key={i} className="qd-pair">
               <div className="qd-msg me">{x.q}</div>
-              {x.a && <div className="qd-msg ai">{answerBody(x.a)}</div>}
+              {x.a && <div className="qd-msg ai">{answerBody(x.a, i)}</div>}
             </div>
           ))}
           {typing && <div className="qa-typing">Анализирую данные вашего бизнеса<i>.</i><i>.</i><i>.</i></div>}
@@ -330,7 +382,7 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
           {thread.map((x, i) => (
             <div key={i} className="qa-item">
               <div className="qa-q">{x.q}</div>
-              {x.a && <div className="qa-a">{answerBody(x.a)}</div>}
+              {x.a && <div className="qa-a">{answerBody(x.a, i)}</div>}
             </div>
           ))}
           {typing && <div className="qa-typing">Анализирую данные вашего бизнеса<i>.</i><i>.</i><i>.</i></div>}

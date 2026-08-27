@@ -165,11 +165,6 @@ export default function Page() {
               {icons.chat}
               Чат с поддержкой
             </button>
-            <button className="side-item" onClick={toggleTheme}>
-              {icons.moon}
-              Тёмная тема
-              <span className={`toggle${theme === 'dark' ? ' on' : ''}`} style={{ marginLeft: 'auto', transform: 'scale(.82)' }} aria-hidden="true" />
-            </button>
           </div>
           {NAV.map((group, gi) => (
             <div key={gi}>
@@ -183,6 +178,14 @@ export default function Page() {
               ))}
             </div>
           ))}
+          {/* тема — в самом низу меню, под «Прочее» */}
+          <div className="side-bottom">
+            <button className="side-item" onClick={toggleTheme}>
+              {icons.moon}
+              Тёмная тема
+              <span className={`toggle${theme === 'dark' ? ' on' : ''}`} style={{ marginLeft: 'auto', transform: 'scale(.82)' }} aria-hidden="true" />
+            </button>
+          </div>
         </aside>
 
         {/* ── Контент ── */}
@@ -207,13 +210,6 @@ export default function Page() {
                       <button className="dash-cta" onClick={() => go(d.cta.to)}>{d.cta.label} →</button>
                     </div>
                   ))}
-                </div>
-                <div className="offer-banner one-banner">
-                  <div>
-                    <b>Остаток от 30 000 ₽ — сотовая связь МТС бесплатно</b>
-                    <p>Держите деньги бизнеса в кабинете — и не платите за связь. Это условие МТС One, у вас оно уже выполняется.</p>
-                  </div>
-                  <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => go('one')}>Открыть МТС One</button>
                 </div>
               </section>
 
