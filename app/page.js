@@ -37,11 +37,23 @@ export default function Page() {
   const chatBodyRef = useRef(null)
 
   const heroAsk = useRef(null)
+  const assistRef = useRef(null)
+  const [assistVisible, setAssistVisible] = useState(false)
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' && localStorage.getItem('theme')
     if (saved === 'dark') setTheme('dark')
   }, [])
+
+  /* плашка «Отвечу на любой вопрос…» скрывается, когда ассистент на экране */
+  useEffect(() => {
+    if (active !== 'home') return
+    const el = assistRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => setAssistVisible(e.isIntersecting), { threshold: 0.2 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [active])
 
   // push-уведомление о кешбэке — на 15-й секунде просмотра
   const [pushOpen, setPushOpen] = useState(false)
@@ -114,9 +126,12 @@ export default function Page() {
 
   return (
     <>
-      {/* ── Шапка ── */}
+      {/* ── Шапка: только меню, логотип, подписка и профиль ── */}
       <header className="header">
-        <button className="burger" onClick={() => setSideOpen((v) => !v)} aria-label="Меню">{icons.burger}</button>
+        <button className="burger" onClick={() => setSideOpen((v) => !v)} aria-label="Меню">
+          {icons.burger}
+          {!notifRead && <span className="dot" />}
+        </button>
         <a className="logo" onClick={() => go('home')}>
           <span className="logo-text"><span className="mts">МТС</span><span className="bank">БИЗНЕС</span></span>
         </a>
@@ -125,42 +140,6 @@ export default function Page() {
           <span className="sub-text">Премиум подписка</span>
           <span className="sub-chip">Активна</span>
         </button>
-        <div className="header-icons">
-          <button className="theme-switch" onClick={toggleTheme} aria-label="Переключить тему">
-            <span className={theme === 'light' ? 'on' : ''}>{icons.sun}</span>
-            <span className={`moon${theme === 'dark' ? ' on' : ''}`}>{icons.moon}</span>
-          </button>
-          <button className="icon-btn" onClick={openChat} aria-label="Чат поддержки">{icons.chat}<span className="dot" /></button>
-          <div className="notif-wrap">
-            <button className="icon-btn" onClick={() => setNotifOpen((v) => !v)} aria-label="Уведомления">
-              {icons.bell}
-              {!notifRead && <span className="dot" />}
-            </button>
-            {notifOpen && (
-              <>
-                <div className="pop-backdrop" onClick={() => setNotifOpen(false)} />
-                <div className="notif-panel">
-                  <div className="notif-head">
-                    <h3>Уведомления</h3>
-                    <button onClick={() => { setNotifRead(true); ping('Все уведомления прочитаны') }}>Прочитать все</button>
-                  </div>
-                  <div className="notif-list">
-                    {NOTIFS.map((nt, i) => (
-                      <div key={i} className="notif-item" onClick={() => go(nt.to)}>
-                        <span className="notif-emoji">{nt.emoji}</span>
-                        <div>
-                          <div className="notif-text">{nt.text}</div>
-                          <div className="notif-time">{nt.time}</div>
-                        </div>
-                        {!notifRead && i < 4 && <span className="notif-unread" />}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
         <div className="account" onClick={() => setProfileOpen(true)}>
           <div className="avatar">ИА</div>
           <div className="account-texts">
@@ -175,6 +154,23 @@ export default function Page() {
         {/* ── Сайдбар ── */}
         {sideOpen && <div className="side-backdrop" onClick={() => setSideOpen(false)} />}
         <aside className={`sidebar${sideOpen ? ' open' : ''}`}>
+          {/* инструменты: уведомления, поддержка и тема — здесь, а не в шапке */}
+          <div className="side-tools">
+            <button className="side-item" onClick={() => { setNotifOpen(true); setSideOpen(false) }}>
+              {icons.bell}
+              Уведомления
+              {!notifRead && <span className="badge">4</span>}
+            </button>
+            <button className="side-item" onClick={() => { openChat(); setSideOpen(false) }}>
+              {icons.chat}
+              Чат с поддержкой
+            </button>
+            <button className="side-item" onClick={toggleTheme}>
+              {icons.moon}
+              Тёмная тема
+              <span className={`toggle${theme === 'dark' ? ' on' : ''}`} style={{ marginLeft: 'auto', transform: 'scale(.82)' }} aria-hidden="true" />
+            </button>
+          </div>
           {NAV.map((group, gi) => (
             <div key={gi}>
               {group.section && <div className="side-label">{group.section}</div>}
@@ -195,22 +191,9 @@ export default function Page() {
             <Section id={active} ctx={ctx} />
           ) : (
             <div className="home-panel">
-              <section className="home-hero">
-                <div className="welcome">
-                  <h1>Задайте любой вопрос</h1>
-                  <p>Виталий, я знаю всё о вашей пекарне — спросите своими словами.</p>
-                </div>
-                <div className="home-query">
-                  <QueryBar hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
-                </div>
-                <button className="hero-scroll"
-                  onClick={() => document.querySelector('.home-dash')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Что с моим бизнесом сегодня? <span aria-hidden="true">↓</span>
-                </button>
-              </section>
+              {/* дашборды — на самом верху, одинаково на десктопе и мобильном */}
               <section className="home-dash">
                 <h2>Что с моим бизнесом сегодня?</h2>
-                <p className="home-dash-sub">Шесть главных ответов — и понятное действие к каждому.</p>
                 <div className="dash-grid">
                   {HOME_DASH.map((d) => (
                     <div key={d.title} className="card dash-card">
@@ -225,11 +208,62 @@ export default function Page() {
                     </div>
                   ))}
                 </div>
+                <div className="offer-banner one-banner">
+                  <div>
+                    <b>Остаток от 30 000 ₽ — сотовая связь МТС бесплатно</b>
+                    <p>Держите деньги бизнеса в кабинете — и не платите за связь. Это условие МТС One, у вас оно уже выполняется.</p>
+                  </div>
+                  <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => go('one')}>Открыть МТС One</button>
+                </div>
               </section>
+
+              {/* ассистент — внизу */}
+              <section className="home-assist" ref={assistRef}>
+                <div className="welcome">
+                  <h1>Добро пожаловать, Виталий!</h1>
+                  <p>Спросите о вашем бизнесе своими словами — отвечу и сразу предложу действие.</p>
+                </div>
+                <div className="home-query">
+                  <QueryBar hero hint={HOME_HINT} apiRef={heroAsk} onNavigate={go} />
+                </div>
+              </section>
+
+              {/* плашка-путь к ассистенту: видна, пока ассистент вне экрана */}
+              {!assistVisible && (
+                <button className="assist-pill"
+                  onClick={() => assistRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+                  Отвечу на любой вопрос о вашем бизнесе <span aria-hidden="true">↓</span>
+                </button>
+              )}
             </div>
           )}
         </main>
       </div>
+
+      {/* ── Уведомления (открываются из меню) ── */}
+      {notifOpen && (
+        <>
+          <div className="pop-backdrop" onClick={() => setNotifOpen(false)} />
+          <div className="notif-panel menu-notif">
+            <div className="notif-head">
+              <h3>Уведомления</h3>
+              <button onClick={() => { setNotifRead(true); ping('Все уведомления прочитаны') }}>Прочитать все</button>
+            </div>
+            <div className="notif-list">
+              {NOTIFS.map((nt, i) => (
+                <div key={i} className="notif-item" onClick={() => { setNotifOpen(false); go(nt.to) }}>
+                  <span className="notif-emoji">{nt.emoji}</span>
+                  <div>
+                    <div className="notif-text">{nt.text}</div>
+                    <div className="notif-time">{nt.time}</div>
+                  </div>
+                  {!notifRead && i < 4 && <span className="notif-unread" />}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ── Чат поддержки ── */}
       {chatOpen && (

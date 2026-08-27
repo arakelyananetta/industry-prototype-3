@@ -179,6 +179,7 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
   const [typing, setTyping] = useState(false)
   const [val, setVal] = useState('')
   const [ph, setPh] = useState(0)
+  const [moreOpen, setMoreOpen] = useState(false)
   const bodyRef = useRef(null)
   const phs = hint.phs || (hint.ph ? [hint.ph] : ['Спросите о вашем бизнесе своими словами…'])
 
@@ -288,14 +289,6 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
           {typing && <div className="qa-typing">Анализирую данные вашего бизнеса<i>.</i><i>.</i><i>.</i></div>}
         </div>
       )}
-      {hero && !chatMode && hint.chipsTop?.length > 0 && (
-        <div className="query-chips top">
-          {hint.chipsTop.map((c) => {
-            const label = typeof c === 'string' ? c : c.label
-            return <button key={label} className="query-chip" onClick={() => chipClick(c)}>{label}</button>
-          })}
-        </div>
-      )}
       {hero ? (
         <div className="query-glow">
           <span className="glow-blob b1" aria-hidden="true" />
@@ -313,6 +306,13 @@ export function QueryBar({ hint = {}, hero = false, apiRef, onNavigate }) {
             const label = typeof c === 'string' ? c : c.label
             return <button key={label} className="query-chip" onClick={() => chipClick(c)}>{label}</button>
           })}
+          {moreOpen && hint.moreChips?.map((c) => {
+            const label = typeof c === 'string' ? c : c.label
+            return <button key={label} className="query-chip" onClick={() => chipClick(c)}>{label}</button>
+          })}
+          {!moreOpen && hint.moreChips?.length > 0 && (
+            <button className="query-chip chip-more" onClick={() => setMoreOpen(true)}>Ещё…</button>
+          )}
         </div>
       )}
       {!chatMode && hint.offer && thread.length === 0 && !typing && (
@@ -353,6 +353,9 @@ export function SectionShell({ title, sub, actions, ctx, children }) {
         {actions && <div className="section-actions">{actions}</div>}
       </div>
       <QueryBar hint={SECTION_HINTS[title] || {}} onNavigate={ctx.go} />
+      <div className="omni-note">
+        Удобнее в переписке? Этот раздел отвечает и в мессенджере — <a onClick={() => ctx.go('max')}>продолжите диалог в MAX</a>.
+      </div>
       {children}
     </div>
   )

@@ -14,11 +14,12 @@ export const NAV = [
     ],
   },
   {
-    section: 'Подключение сервисов',
+    section: 'Сервисы',
     items: [
-      { id: 'mail', label: 'Работа с почтой', icon: 'mail', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'max', label: 'Работа с MAX', icon: 'comms', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'calendar', label: 'Календарь', icon: 'calendar', badge: 'Новое', badgeClass: 'purple' },
+      { id: 'services', label: 'Сервисы для бизнеса', icon: 'segments' },
+      { id: 'loyalty', label: 'KD Pay · клуб друзей', icon: 'people', badge: 'Новое', badgeClass: 'purple' },
+      { id: 'xpay', label: 'X pay', icon: 'acquiring', badge: 'Новое', badgeClass: 'purple' },
+      { id: 'one', label: 'МТС One', icon: 'phone', badge: 'Новое', badgeClass: 'purple' },
     ],
   },
   {
@@ -35,19 +36,20 @@ export const NAV = [
     section: 'Финансы',
     items: [
       { id: 'payments', label: 'Финансы', icon: 'accounts' },
-      { id: 'cards', label: 'Бизнес-карта', icon: 'acquiring' },
+      { id: 'cards', label: 'Карты', icon: 'acquiring' },
       { id: 'acquiring', label: 'Приём оплаты', icon: 'acquiring' },
       { id: 'credits', label: 'Деньги на развитие', icon: 'credits' },
       { id: 'deposits', label: 'Накопления', icon: 'deposits' },
       { id: 'guarantees', label: 'Гарантии для сделок', icon: 'guarantees' },
       { id: 'accounting', label: 'Налоги и отчётность', icon: 'accounting' },
       { id: 'promos', label: 'Акции', icon: 'spark' },
-      { id: 'services', label: 'Сервисы для бизнеса', icon: 'segments', badge: 'Новое', badgeClass: 'purple' },
     ],
   },
   {
     section: 'Прочее',
     items: [
+      { id: 'connect', label: 'Подключение сервисов', icon: 'settings', badge: 'Новое', badgeClass: 'purple' },
+      { id: 'team', label: 'Команда и роли', icon: 'clients', badge: 'Новое', badgeClass: 'purple' },
       { id: 'documents', label: 'Документы', icon: 'documents' },
       { id: 'settings', label: 'Настройки', icon: 'settings' },
     ],
@@ -64,35 +66,47 @@ export const HOME_DASH = [
     cta: { label: 'Посмотреть, что покупают', to: 'analytics' },
   },
   {
-    title: 'Новые клиенты', value: '3 сегодня', delta: '−40% к обычному дню', trend: 'down',
-    note: 'Поток новых клиентов проседает вторую неделю.',
-    series: mkSeries(9, 3, 26, 2, 5), unit: '',
-    cta: { label: 'Увеличить количество клиентов', to: 'growth' },
-  },
-  {
-    title: 'Заказы', value: '12 сегодня', delta: '3 ждут подтверждения', trend: 'up',
-    note: 'Два заказа на торты — стоит подтвердить до обеда.',
-    series: mkSeries(4, 12, 26, 2, 9), unit: '',
-    cta: { label: 'Обработать новые заказы', to: 'orders' },
-  },
-  {
-    title: 'Спящие клиенты', value: '214 человек', delta: '+18 за неделю', trend: 'down',
-    note: 'Они уже покупали у вас — их проще вернуть, чем найти новых.',
-    series: mkSeries(180, 214, 26, 6, 3), unit: '',
-    cta: { label: 'Вернуть клиентов рассылкой', to: 'comms' },
-  },
-  {
-    title: 'Деньги бизнеса', value: '2 456 780 ₽', delta: 'налог 18 675 ₽ — до 25 августа', trend: 'warn',
-    note: 'Денег достаточно. Оплатите налог заранее — и забудьте о нём.',
+    title: 'Деньги бизнеса', value: '2 456 780 ₽', delta: '+129 040 ₽ за неделю', trend: 'up',
+    note: 'Остаток выше 30 000 ₽ — сотовая связь МТС для вас бесплатна.',
     series: mkSeries(2210000, 2456780, 26, 42000, 11), unit: ' ₽',
-    cta: { label: 'Оплатить налог заранее', to: 'accounting' },
+    cta: { label: 'Посмотреть движение денег', to: 'payments' },
   },
   {
-    title: 'Приём оплаты', value: '31 480 ₽ по картам', delta: 'курьерский терминал не работает', trend: 'down',
-    note: 'Пока терминал офлайн, курьеры теряют часть оплат.',
-    series: mkSeries(38000, 31480, 26, 2600, 17), unit: ' ₽',
-    cta: { label: 'Проверить терминал', to: 'acquiring' },
+    title: 'Активные клиенты', value: '892', delta: '+6% к прошлому месяцу', trend: 'up',
+    note: '486 из них — постоянные. Самое время сказать им спасибо.',
+    series: mkSeries(760, 892, 26, 14, 3), unit: '',
+    cta: { label: 'Поблагодарить бонусами', to: 'loyalty' },
   },
+  {
+    title: 'Клиенты возвращаются', value: '42%', delta: 'у соседей — 27%', trend: 'up',
+    note: 'Почти каждый второй приходит снова в течение месяца.',
+    series: mkSeries(36, 42, 26, 2, 7), unit: '%',
+    cta: { label: 'Укрепить привычку покупать', to: 'loyalty' },
+  },
+  {
+    title: 'Средний чек', value: '425 ₽', delta: '+7% к прошлому месяцу', trend: 'up',
+    note: 'Комбо-наборы сработали. Следующий шаг — допродажи у кассы.',
+    series: mkSeries(388, 425, 26, 7, 11), unit: ' ₽',
+    cta: { label: 'Поднять чек допродажами', to: 'analytics' },
+  },
+  {
+    title: 'Частота покупок', value: '3,4 в месяц', delta: '+0,3 к прошлому месяцу', trend: 'up',
+    note: 'Клиенты заходят чаще. Акция на будни ускорит рост.',
+    series: mkSeries(29, 34, 26, 2, 9), unit: '',
+    cta: { label: 'Запустить акцию на будни', to: 'comms' },
+  },
+]
+
+/* ── команда: одна роль = один инструмент, общение с инструментом — и в мессенджере ── */
+export const ROLES = [
+  { role: 'Владелец', person: 'Виталий Сиванев', tool: 'Весь кабинет', toolTo: 'home', status: ['Активен', 'green'], note: 'Полный доступ, настройка ролей и приглашения' },
+  { role: 'Клиентский менеджер', person: 'Мария Орлова', tool: 'CRM пекарни', toolTo: 'crm', status: ['Активна', 'green'], note: 'Клиенты, сегменты и история покупок' },
+  { role: 'Сотрудник на входящем потоке', person: 'Игорь Тарасов', tool: 'Заказы', toolTo: 'orders', status: ['Активен', 'green'], note: 'Приём и подтверждение заказов в зале' },
+  { role: 'Бухгалтер', person: 'Ольга Николаевна', tool: 'Налоги и отчётность', toolTo: 'accounting', status: ['Активна', 'green'], note: 'Налоги, документы и движение денег' },
+  { role: 'Курьер', person: '2 сотрудника', tool: 'Доставка и приём оплаты', toolTo: 'acquiring', status: ['Активны', 'green'], note: 'Маршрут заказа и оплата на месте' },
+  { role: 'Маркетолог', person: 'не назначен', tool: 'Привлечение и рассылки', toolTo: 'growth', status: ['Пригласить', 'blue'], note: 'Кампании, акции и сегменты' },
+  { role: 'Пекарь · смена', person: 'Ирина + 3 сотрудника', tool: 'Задачи и календарь', toolTo: 'calendar', status: ['Активны', 'green'], note: 'План выпечки и дела смены' },
+  { role: 'Сотрудник РТК (МТС)', person: 'Иван Соколов', tool: 'Подключение сервисов', toolTo: 'connect', status: ['Активен', 'green'], note: 'Помогает подключать и настраивать сервисы' },
 ]
 
 /* ── KPI дашборда: ключевые метрики + сравнение с конкурентами рядом ── */

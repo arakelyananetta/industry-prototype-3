@@ -7,7 +7,7 @@ import {
   TXS, TERMINALS, GUARANTEES, TAX_EVENTS, DEPOSIT_PRODUCTS, DOCS,
   REVENUE_SERIES, GROWTH_ACTIONS, KPIS, PROMOS, SERVICES,
   CHANNELS, GOALS, CITIES,
-  MAIL_PROVIDERS, MAIL_INBOX, MAX_CHATS, CAL_PROVIDERS, CAL_EVENTS,
+  MAIL_PROVIDERS, MAIL_INBOX, MAX_CHATS, CAL_PROVIDERS, CAL_EVENTS, ROLES,
 } from './data'
 
 const chip = ([label, cls], key) => <span key={key || label} className={`chip ${cls}`}>{label}</span>
@@ -917,8 +917,15 @@ function Payments({ ctx }) {
         </div>
         <div className="b-actions">
           <button onClick={() => ctx.openProfile()}>Реквизиты</button>
-          <button onClick={() => ctx.go('documents')}>Выписка</button>
+          <button onClick={() => ctx.go('documents')}>Отчёт</button>
         </div>
+      </div>
+      <div className="offer-banner">
+        <div>
+          <b>Остаток от 30 000 ₽ — сотовая связь МТС бесплатно</b>
+          <p>Условие уже выполняется: при ежедневном остатке от 30 000 ₽ абонентская плата за связь — 0 ₽.</p>
+        </div>
+        <button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.go('one')}>Открыть МТС One</button>
       </div>
       <div className="card" style={{ marginTop: 18 }}>
         <h3 className="block-title" style={{ fontSize: 16 }}>Последние операции</h3>
@@ -967,7 +974,7 @@ function Cards({ ctx }) {
     }
   }
   return (
-    <SectionShell title="Бизнес-карта" sub="Карта для трат бизнеса — привязана к вашим деньгам" ctx={ctx}
+    <SectionShell title="Карты" sub="Карты для трат бизнеса — привязаны к вашим деньгам" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.go('card-form')}>+ Выпустить карту</button>}>
       <div className="cards-layout">
         <div className="bank-card-wrap">
@@ -1047,7 +1054,7 @@ function Cards({ ctx }) {
   )
 }
 
-/* ═══ Эквайринг ═══ */
+/* ═══ Приём оплаты ═══ */
 function Acquiring({ ctx }) {
   const [form, setForm] = useState(false)
   const p = usePeriod('month')
@@ -1062,6 +1069,13 @@ function Acquiring({ ctx }) {
         ['Терминалов', '3', '2 онлайн'],
         ['Средний чек по картам', '462 ₽', pi.sub],
       ]} />
+      <div className="offer-banner purple">
+        <div>
+          <b>X pay: приём оплаты за 0,3%</b>
+          <p>Клиент платит по QR из своего профиля «Мой МТС» — деньги приходят напрямую, без карт. В 4 раза дешевле оплаты картой.</p>
+        </div>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Подключить X pay</button>
+      </div>
       <T
         head={['Терминал', 'Модель', 'Статус', 'Выручка сегодня']}
         rows={TERMINALS.map((t) => [<b>{t.name}</b>, t.model, chip(t.status), t.today])}
@@ -1085,7 +1099,7 @@ function Acquiring({ ctx }) {
   )
 }
 
-/* ═══ Кредиты ═══ */
+/* ═══ Деньги на развитие ═══ */
 function Credits({ ctx }) {
   const [sum, setSum] = useState(3000000)
   const [months, setMonths] = useState(24)
@@ -1151,7 +1165,7 @@ function Credits({ ctx }) {
   )
 }
 
-/* ═══ Депозиты ═══ */
+/* ═══ Накопления ═══ */
 function Deposits({ ctx }) {
   const [sum, setSum] = useState(1000000)
   const [months, setMonths] = useState(6)
@@ -1636,11 +1650,234 @@ function CalendarSec({ ctx }) {
   )
 }
 
+/* ═══ KD Pay · клуб друзей: лояльность 2.0 — фондируется трафиком, а не маржой ═══ */
+function Loyalty({ ctx }) {
+  const [on, setOn] = useState({ magnet: true, friends: true, plm: false })
+  const toggle = (k, name) => {
+    setOn((o) => ({ ...o, [k]: !o[k] }))
+    ctx.ping(on[k] ? `Механика «${name}» выключена` : `Механика «${name}» включена`)
+  }
+  const MECHANICS = [
+    { k: 'club', name: 'Баллы за покупки', desc: '5% баллами с каждой покупки, списание до 30% чека. Баллы сгорают через 90 дней — клиенты возвращаются быстрее.', chip: ['Основа клуба', 'green'], always: true },
+    { k: 'magnet', name: 'Товар-магнит за 49 ₽', desc: 'Кофе за 49 ₽ только участникам клуба. Приводит трафик к кассе — а вместе с ним и полноценные покупки.', chip: ['Трафик', 'purple'] },
+    { k: 'friends', name: 'Приведи друга', desc: 'Баллы обоим за первую покупку друга. У вас 486 постоянных — это готовая армия рекомендаций.', chip: ['Рекомендации', 'blue'] },
+    { k: 'plm', name: 'People like me · бронирования', desc: 'Похожим на ваших клиентов людям предлагают забронировать у вас — баллы фондирует партнёрская механика, не ваша маржа.', chip: ['Партнёры платят', 'gold'] },
+  ]
+  return (
+    <SectionShell title="KD Pay · клуб друзей" sub="Управление лояльностью: клиенты возвращаются чаще, а бонусы оплачивает трафик" ctx={ctx}
+      actions={<button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.ping('Настройки клуба сохранены (демо)')}>Настроить клуб</button>}>
+      <StatRow stats={[
+        ['Участников клуба', '486', '+31 за месяц'],
+        ['Покупают чаще', '+24%', 'к клиентам вне клуба'],
+        ['Выручка от клуба', '412 000 ₽/мес', '33% всей выручки'],
+        ['Баллы фондируют', 'партнёры', 'а не ваша маржа'],
+      ]} />
+      <div className="offer-banner purple">
+        <div>
+          <b>Лояльность 2.0: бонусы оплачивают механики трафика</b>
+          <p>Товар-магнит, рекомендации и партнёрские бронирования приводят людей и фондируют баллы — скидки из вашей маржи не нужны.</p>
+        </div>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Баллы работают через X pay</button>
+      </div>
+      <div className="seg-grid">
+        {MECHANICS.map((m) => (
+          <div key={m.k} className="card seg-card">
+            <div className="seg-top">
+              <b>{m.name}</b>
+              <span className={`chip ${m.chip[1]}`}>{m.chip[0]}</span>
+            </div>
+            <p className="seg-desc" style={{ flex: 1 }}>{m.desc}</p>
+            <div className="seg-actions">
+              {m.always
+                ? <button className="btn-gray" style={{ width: 'auto' }} disabled>Включено ✓</button>
+                : <button className={on[m.k] ? 'btn-gray' : 'btn-purple'} style={{ width: 'auto', marginTop: 0 }}
+                    onClick={() => toggle(m.k, m.name)}>{on[m.k] ? 'Выключить' : 'Включить'}</button>}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="card" style={{ marginTop: 18 }}>
+        <h3 className="block-title" style={{ fontSize: 16 }}>Как это работает вместе</h3>
+        <ul className="promo-list" style={{ maxWidth: 'none', marginTop: 12 }}>
+          <li><span className="check">✓</span>Клиент платит через X pay — баллы начисляются и списываются автоматически, без карт лояльности.</li>
+          <li><span className="check">✓</span>Спящие участники клуба получают напоминание в мессенджере — с их любимым товаром.</li>
+          <li><span className="check">✓</span>Вся аналитика клуба — в «Сегментах» и «Профиле клиента».</li>
+        </ul>
+      </div>
+    </SectionShell>
+  )
+}
+
+/* ═══ X pay: оплата напрямую (me2me) — трафик и 0,3% для бизнеса ═══ */
+function Xpay({ ctx }) {
+  const [connected, setConnected] = useState(false)
+  return (
+    <SectionShell title="X pay" sub="Оплата по QR напрямую из «Мой МТС» — без карт и терминалов" ctx={ctx}>
+      <StatRow stats={[
+        ['Ваша комиссия', '0,3%', 'вместо 1,2% за карты'],
+        ['Деньги приходят', 'мгновенно', 'а не на следующее утро'],
+        ['Для клиента', '1 клик', 'из приложения «Мой МТС»'],
+        ['Баллы клуба', 'автоматически', 'связка с KD Pay'],
+      ]} />
+      <div className="offer-banner purple">
+        <div>
+          <b>Почему это выгодно: перевод идёт напрямую, со счёта на счёт</b>
+          <p>Без карточных посредников — поэтому комиссия 0,3%. Миллионы пользователей «Мой МТС» уже платят так каждый день: это ещё и поток новых клиентов.</p>
+        </div>
+        <button className="btn-purple" style={{ marginTop: 0 }}
+          onClick={() => { setConnected(true); ctx.ping('X pay подключён — QR-код появится на кассе (демо)') }}>
+          {connected ? 'Подключено ✓' : 'Подключить X pay'}
+        </button>
+      </div>
+      <div className="seg-grid">
+        <div className="card seg-card">
+          <b>QR у кассы и на доставке</b>
+          <p className="seg-desc" style={{ flex: 1 }}>Клиент сканирует QR — деньги у вас мгновенно. Работает на кассе, у курьера и в переписке.</p>
+        </div>
+        <div className="card seg-card">
+          <b>Оплата прямо в мессенджере</b>
+          <p className="seg-desc" style={{ flex: 1 }}>Отправьте запрос на оплату в чат MAX — клиент подтверждает одним нажатием, заказ сразу помечается оплаченным.</p>
+        </div>
+        <div className="card seg-card">
+          <b>Трафик из «Мой МТС»</b>
+          <p className="seg-desc" style={{ flex: 1 }}>Ваша точка видна в самом посещаемом разделе приложения. Люди рядом видят вас в момент, когда готовы платить.</p>
+        </div>
+        <div className="card seg-card">
+          <b>Связка с клубом друзей</b>
+          <p className="seg-desc" style={{ flex: 1 }}>Баллы KD Pay начисляются и списываются в момент оплаты — клиенту не нужно ничего предъявлять.</p>
+        </div>
+      </div>
+    </SectionShell>
+  )
+}
+
+/* ═══ МТС One: телеком для бизнеса — бесплатно при работе через кабинет ═══ */
+function One({ ctx }) {
+  return (
+    <SectionShell title="МТС One" sub="Связь и телеком для бизнеса — бесплатно, когда деньги работают в кабинете" ctx={ctx}>
+      <div className="offer-banner">
+        <div>
+          <b>Остаток от 30 000 ₽ — сотовая связь бесплатно</b>
+          <p>Ваш ежедневный остаток 2 456 780 ₽ — условие выполняется. В августе за связь вы платите 0 ₽.</p>
+        </div>
+        <span className="chip green" style={{ alignSelf: 'center', padding: '8px 14px' }}>Условие выполнено ✓</span>
+      </div>
+      <StatRow stats={[
+        ['Экономия на связи', '3 600 ₽/мес', '4 номера команды'],
+        ['Условие', 'от 30 000 ₽', 'ежедневный остаток'],
+        ['Статус в августе', '0 ₽', 'за связь и интернет'],
+        ['Оплата сервисов', 'через X pay', 'единый профиль МТС'],
+      ]} />
+      <div className="seg-grid">
+        <div className="card seg-card">
+          <div className="seg-top"><b>Бесплатная связь для команды</b><span className="chip green">Активно</span></div>
+          <p className="seg-desc" style={{ flex: 1 }}>4 корпоративных номера: звонки, SMS и интернет — 0 ₽, пока деньги бизнеса работают в кабинете.</p>
+        </div>
+        <div className="card seg-card">
+          <div className="seg-top"><b>Усилитель сотовой связи</b><span className="chip blue">В подарок</span></div>
+          <p className="seg-desc" style={{ flex: 1 }}>Если в пекарне слабый сигнал — установим усилитель бесплатно. Касса, X pay и терминалы всегда онлайн.</p>
+          <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.ping('Заявка на усилитель принята — инженер позвонит сегодня (демо)')}>Заказать установку</button>
+        </div>
+        <div className="card seg-card">
+          <div className="seg-top"><b>Безлимит на сервисы МТС</b><span className="chip green">Активно</span></div>
+          <p className="seg-desc" style={{ flex: 1 }}>Кабинет, MAX, касса и музыка в зале не тратят трафик — работают даже при нулевом балансе телефона.</p>
+        </div>
+        <div className="card seg-card">
+          <div className="seg-top"><b>Единый профиль «Мой МТС»</b><span className="chip purple">X pay</span></div>
+          <p className="seg-desc" style={{ flex: 1 }}>Один профиль для связи, финансов и оплат. Клиенты платят вам через X pay из того же приложения.</p>
+          <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.go('xpay')}>Про X pay →</button>
+        </div>
+      </div>
+    </SectionShell>
+  )
+}
+
+/* ═══ Команда и роли: одна роль = один инструмент, каждый инструмент — и в мессенджере ═══ */
+function Team({ ctx }) {
+  const [form, setForm] = useState(false)
+  return (
+    <SectionShell title="Команда и роли" sub="Одна роль — один инструмент: каждый видит только то, что нужно для работы" ctx={ctx}
+      actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Пригласить сотрудника</button>}>
+      <div className="card" style={{ marginTop: 18 }}>
+        <h3 className="block-title" style={{ fontSize: 16 }}>Как устроены роли</h3>
+        <ul className="promo-list" style={{ maxWidth: 'none', marginTop: 12 }}>
+          <li><span className="check">✓</span>Сотрудник получает ровно один инструмент — без лишних разделов и случайных ошибок.</li>
+          <li><span className="check">✓</span>Каждый инструмент отвечает на вопросы своими словами — и в кабинете, и в мессенджере MAX.</li>
+          <li><span className="check">✓</span>Курьер пишет «какие у меня доставки?» в чат — и получает маршрут. Бухгалтер — «что платить до 25-го?».</li>
+        </ul>
+      </div>
+      <T
+        head={['Роль', 'Сотрудник', 'Инструмент', 'Канал', 'Статус']}
+        rows={ROLES.map((r) => [
+          <b>{r.role}</b>,
+          <><div>{r.person}</div><div className="tx-desc">{r.note}</div></>,
+          <a className="link-inline" onClick={(e) => { e.stopPropagation(); ctx.go(r.toolTo) }}>{r.tool}</a>,
+          <span className="chip purple">кабинет + MAX</span>,
+          chip(r.status),
+        ])}
+        onRow={(i) => ROLES[i].status[0] === 'Пригласить' ? setForm(true) : ctx.ping(`Роль «${ROLES[i].role}» — доступ только к инструменту «${ROLES[i].tool}»`)}
+      />
+      {form && <FormModal title="Приглашение в команду" sub="Сотрудник получит ссылку в SMS и мессенджер MAX"
+        fields={[
+          { label: 'Имя и фамилия', placeholder: 'Например, Анна Петрова' },
+          { label: 'Телефон', placeholder: '+7 (___) ___-__-__' },
+          { label: 'Роль', type: 'select', options: ROLES.filter((r) => r.role !== 'Владелец').map((r) => `${r.role} — ${r.tool}`) },
+        ]}
+        submitLabel="Пригласить" successText="Приглашение отправлено. Доступ появится, как только сотрудник примет его."
+        onClose={() => setForm(false)} ping={ctx.ping} />}
+    </SectionShell>
+  )
+}
+
+/* ═══ Подключение сервисов: единый хаб — почта, MAX, календарь, 1С, Эвотор ═══ */
+function ConnectHub({ ctx }) {
+  const [linked, setLinked] = useState({})
+  const connect = (id, name) => { setLinked((l) => ({ ...l, [id]: true })); ctx.ping(`${name} подключён — данные загружаются (демо)`) }
+  const HUB = [
+    { id: 'mail', emoji: '✉️', name: 'Работа с почтой', desc: 'Письма клиентов и поставщиков в кабинете, ассистент готовит черновики ответов.', open: 'mail' },
+    { id: 'max', emoji: '💬', name: 'Работа с MAX', desc: 'Чаты с клиентами и командой, заказы из переписки сразу попадают в CRM.', open: 'max' },
+    { id: 'calendar', emoji: '📅', name: 'Календарь', desc: 'Синхронизация с календарём телефона и компьютера: дела, заказы и налоговые сроки.', open: 'calendar' },
+    { id: '1c', emoji: '🧮', name: '1С', desc: 'Обмен документами и данными учёта — бухгалтерия всегда актуальна, без ручного переноса.' },
+    { id: 'evotor', emoji: '🛒', name: 'Эвотор', desc: 'Кассы Эвотор передают товары и продажи в кабинет автоматически (a2a-фиды).' },
+  ]
+  return (
+    <SectionShell title="Подключение сервисов" sub="Почта, мессенджер, календарь и учётные системы — всё в одном месте" ctx={ctx}>
+      <div className="seg-grid">
+        {HUB.map((s) => (
+          <div key={s.id} className="card seg-card">
+            <div className="svc-card-emoji" aria-hidden="true">{s.emoji}</div>
+            <div className="seg-top">
+              <b>{s.name}</b>
+              {linked[s.id] && <span className="chip green">Подключено</span>}
+            </div>
+            <p className="seg-desc" style={{ flex: 1 }}>{s.desc}</p>
+            <div className="seg-actions">
+              {s.open
+                ? <button className="btn-red" style={{ marginTop: 0 }} onClick={() => ctx.go(s.open)}>Открыть</button>
+                : <button className={linked[s.id] ? 'btn-gray' : 'btn-red'} style={{ marginTop: 0, width: 'auto' }}
+                    onClick={() => !linked[s.id] && connect(s.id, s.name)}>{linked[s.id] ? 'Настроить' : 'Подключить'}</button>}
+            </div>
+          </div>
+        ))}
+        <div className="card seg-card">
+          <div className="svc-card-emoji" aria-hidden="true">🤝</div>
+          <b>Нужен другой сервис?</b>
+          <p className="seg-desc" style={{ flex: 1 }}>Сотрудник РТК (МТС) поможет подключить и настроить любой сервис — напишите в чат.</p>
+          <div className="seg-actions">
+            <button className="btn-gray" style={{ marginTop: 0, width: 'auto' }} onClick={() => ctx.go('team')}>Команда и роли →</button>
+          </div>
+        </div>
+      </div>
+    </SectionShell>
+  )
+}
+
 const REGISTRY = {
   crm: Crm, orders: Orders, clients: Clients, segments: Segments, comms: Comms,
   analytics: Analytics, growth: Growth, promos: Promos, services: Services, premium: Premium,
   mkt: MktAnalytics, audience: Audience,
   mail: Mail, max: Max, calendar: CalendarSec,
+  loyalty: Loyalty, xpay: Xpay, one: One, team: Team, connect: ConnectHub,
   payments: Payments, cards: Cards, acquiring: Acquiring,
   credits: Credits, deposits: Deposits, guarantees: Guarantees, accounting: Accounting,
   documents: Documents, settings: Settings, tasks: Tasks,

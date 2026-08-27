@@ -87,8 +87,12 @@ input, select, textarea { font-family: inherit; outline: none; }
   box-shadow: 0 4px 18px rgba(20, 30, 60, .08);
 }
 [data-theme="dark"] .header { box-shadow: 0 4px 22px rgba(0, 0, 0, .45); }
-.burger { display: flex; width: 42px; height: 42px; border-radius: 12px; align-items: center; justify-content: center; }
+.burger { display: flex; width: 42px; height: 42px; border-radius: 12px; align-items: center; justify-content: center; position: relative; }
 .burger:hover { background: var(--hover); }
+.burger .dot {
+  position: absolute; top: 7px; right: 7px; width: 7px; height: 7px;
+  background: var(--red); border-radius: 50%; border: 1.5px solid var(--card);
+}
 .logo { display: flex; align-items: center; cursor: pointer; flex-shrink: 0; color: var(--logo); }
 .logo-text { line-height: 1; white-space: nowrap; }
 .logo-text .mts { font-size: 24px; font-weight: 800; color: var(--logo); letter-spacing: .5px; }
@@ -134,7 +138,7 @@ input, select, textarea { font-family: inherit; outline: none; }
 .theme-switch span.on { background: var(--card); color: var(--orange); box-shadow: 0 2px 8px rgba(0, 0, 0, .14); }
 .theme-switch span.on.moon { color: var(--purple); }
 
-.account { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 12px; flex-shrink: 0; }
+.account { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 8px; border-radius: 12px; flex-shrink: 0; margin-left: auto; }
 .account:hover { background: var(--hover); }
 .avatar {
   width: 40px; height: 40px; border-radius: 50%; background: var(--bg);
@@ -145,7 +149,7 @@ input, select, textarea { font-family: inherit; outline: none; }
 .account-sub { font-size: 12px; color: var(--gray); margin-top: 1px; white-space: nowrap; }
 .chevron { color: var(--gray); display: flex; }
 
-/* ─── Уведомления ─── */
+/* ─── Уведомления (открываются из меню) ─── */
 .notif-wrap { position: relative; }
 .notif-panel {
   position: absolute; right: 0; top: 52px; width: 396px; max-height: 500px;
@@ -168,6 +172,12 @@ input, select, textarea { font-family: inherit; outline: none; }
 .notif-time { font-size: 11.5px; color: var(--gray); margin-top: 3px; }
 .notif-unread { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; margin-top: 6px; margin-left: auto; }
 .pop-backdrop { position: fixed; inset: 0; z-index: 70; }
+.notif-panel.menu-notif { position: fixed; left: 16px; right: auto; top: 88px; z-index: 80; }
+@media (max-width: 560px) { .notif-panel.menu-notif { left: 12px; right: 12px; width: auto; top: 76px; } }
+
+/* ─── Инструменты в меню: уведомления, поддержка, тема ─── */
+.side-tools { padding-bottom: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
+.side-tools .side-item .badge { margin-left: auto; }
 
 /* ─── Layout ─── */
 .shell { display: flex; }
@@ -227,27 +237,31 @@ input, select, textarea { font-family: inherit; outline: none; }
 .home-panel .query-chips { justify-content: center; }
 .home-panel .query-thread { max-height: 44vh; }
 
-/* hero-экран: поле ассистента целиком умещается в первый экран */
-.home-hero {
+/* ассистент — внизу страницы, одинаково на всех экранах */
+.home-assist {
   min-height: calc(100vh - 76px);
   display: flex; flex-direction: column; justify-content: center;
-  position: relative; padding: 24px 0 72px;
+  padding: 30px 0 90px;
 }
-.query-chips.top { margin-top: 0; margin-bottom: 14px; }
-.hero-scroll {
-  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-  font-size: 13px; font-weight: 600; color: var(--gray);
-  padding: 9px 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--card);
-  white-space: nowrap;
+
+/* плашка-путь к ассистенту (все экраны) */
+.assist-pill {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 65;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  padding: 11px 18px; border-radius: 24px; border: 1px solid var(--line); background: var(--card);
+  box-shadow: 0 10px 34px rgba(20, 30, 60, .18), 0 0 24px rgba(143, 143, 255, .35);
+  white-space: nowrap; max-width: calc(100vw - 24px); overflow: hidden; text-overflow: ellipsis;
+  animation: rise .25s ease;
 }
-.hero-scroll:hover { color: var(--red); border-color: var(--red); }
-.hero-scroll span { display: inline-block; animation: hero-bounce 1.8s ease-in-out infinite; }
+.assist-pill:hover { color: var(--red); border-color: var(--red); }
+.assist-pill span { display: inline-block; animation: hero-bounce 1.8s ease-in-out infinite; }
 @keyframes hero-bounce { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(3px) } }
 
-/* дашборды */
-.home-dash { padding: 10px 0 80px; }
+/* дашборды — на самом верху */
+.home-dash { padding: 26px 0 8px; }
 .home-dash h2 { font-size: 23px; font-weight: 800; }
-.home-dash-sub { color: var(--gray); margin-top: 6px; font-size: 14px; }
+.one-banner { margin-top: 18px; }
 .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
 .dash-card { display: flex; flex-direction: column; padding: 20px; transition: box-shadow .15s; }
 .dash-card:hover { box-shadow: var(--shadow); }
@@ -275,23 +289,7 @@ input, select, textarea { font-family: inherit; outline: none; }
   .home-panel { width: calc(100% - 24px); }
   .home-panel .welcome h1 { font-size: 22px; }
   .dash-grid { grid-template-columns: 1fr; }
-  /* поле ассистента — sticky CTA внизу экрана */
-  .home-hero { min-height: 0; padding: 20px 0 6px; justify-content: flex-start; }
-  .hero-scroll { display: none; }
-  .home-query {
-    position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 65;
-  }
-  .home-query .query-hero { margin: 0; max-width: none; }
-  .home-query .query-chips.top { display: none; }
-  .home-query .query-chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 2px; scrollbar-width: none; }
-  .home-query .query-chips::-webkit-scrollbar { display: none; }
-  .home-query .query-chip { flex-shrink: 0; }
-  .home-query .qd-dialog {
-    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 12px; max-height: 52vh; margin-bottom: 10px;
-    box-shadow: 0 -10px 34px rgba(10, 15, 30, .18);
-  }
-  .home-dash { padding-bottom: 170px; }
+  .home-assist { min-height: calc(100vh - 64px); }
   .home-dash h2 { font-size: 20px; }
 }
 
@@ -421,6 +419,11 @@ input, select, textarea { font-family: inherit; outline: none; }
 .per { font-size: 12px; color: var(--gray); }
 .btn-gray[disabled] { opacity: .6; cursor: default; }
 .query-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.query-chip.chip-more { color: var(--red); border-style: dashed; }
+/* каждый раздел отвечает и в мессенджере — ненавязчивая строка под полем */
+.omni-note { font-size: 12px; color: var(--gray); margin-top: 8px; }
+.omni-note a { color: var(--red); cursor: pointer; }
+.omni-note a:hover { text-decoration: underline; }
 .query-chip {
   font-size: 12.5px; font-weight: 600; color: var(--text);
   border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 8px 14px;
