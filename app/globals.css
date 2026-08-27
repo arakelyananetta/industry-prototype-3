@@ -739,7 +739,8 @@ input, select, textarea { font-family: inherit; outline: none; }
   .sidebar { top: 64px; height: calc(100vh - 64px); }
   .side-backdrop { inset: 64px 0 0 0; }
   .account .account-texts { display: none; }
-  .logo-text .bank { display: none; }
+  .logo-text .mts { font-size: 20px; }
+  .logo-text .bank { font-size: 10px; letter-spacing: 1.2px; vertical-align: 3px; }
   .notif-panel { position: fixed; left: 12px; right: 12px; top: 72px; width: auto; }
   .welcome h1 { font-size: 22px; }
   .kpi-row { grid-template-columns: 1fr; gap: 14px; }

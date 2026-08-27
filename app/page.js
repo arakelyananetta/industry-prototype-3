@@ -224,8 +224,8 @@ export default function Page() {
                 </div>
               </section>
 
-              {/* плашка-путь к ассистенту: видна, пока ассистент вне экрана */}
-              {!assistVisible && (
+              {/* плашка-путь к ассистенту: видна, пока ассистент вне экрана и меню закрыто */}
+              {!assistVisible && !sideOpen && (
                 <button className="assist-pill"
                   onClick={() => assistRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
                   Отвечу на любой вопрос о вашем бизнесе <span aria-hidden="true">↓</span>
