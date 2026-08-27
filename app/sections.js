@@ -68,7 +68,11 @@ function Crm({ ctx }) {
     (seg === 'all' || c.seg.includes(seg)) && c.name.toLowerCase().includes(q.toLowerCase()))
   return (
     <SectionShell title="CRM пекарни" sub="Управляйте клиентами и увеличивайте продажи" ctx={ctx}
-      actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Добавить клиента</button>}>
+      actions={<>
+        <button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('clients')}>Клиенты</button>
+        <button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('segments')}>Сегменты</button>
+        <button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Добавить клиента</button>
+      </>}>
       <StatRow stats={[
         ['Всего клиентов', '1 486', '+3 сегодня'],
         ['Повторные покупки', '42%', 'на сегодня'],
@@ -579,7 +583,11 @@ function Growth({ ctx }) {
   const pi = periodInfo(p)
   return (
     <SectionShell title="Привлечение клиентов" sub="Целевые действия: где взять новых клиентов и как вернуть старых" ctx={ctx}
-      actions={<button className="btn-purple" style={{ marginTop: 0 }} onClick={() => setForm(true)}>Запустить кампанию</button>}>
+      actions={<>
+        <button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('mkt')}>Аналитика кампаний</button>
+        <button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('audience')}>Профиль клиента</button>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => setForm(true)}>Запустить кампанию</button>
+      </>}>
       <TimeFilter p={p} withToday />
       <StatRow labels={pi.labels} stats={[
         ['Показы', SC(184300, pi.k), pi.sub],
@@ -909,6 +917,14 @@ function Payments({ ctx }) {
   return (
     <SectionShell title="Финансы" sub="Деньги бизнеса и движение средств" ctx={ctx}
       actions={<button className="btn-red" style={{ marginTop: 0 }} onClick={() => setForm(true)}>+ Новый перевод</button>}>
+      <div className="chips-row" style={{ marginTop: 14 }}>
+        <button className="filter-chip" onClick={() => ctx.go('cards')}>💳 Карты</button>
+        <button className="filter-chip" onClick={() => ctx.go('deposits')}>💰 Накопления</button>
+        <button className="filter-chip" onClick={() => ctx.go('xpay')}>⚡ Мгновенные переводы</button>
+        <button className="filter-chip" onClick={() => ctx.go('promos')}>🎁 Акции</button>
+        <button className="filter-chip" onClick={() => ctx.go('documents')}>📄 Документы</button>
+        <button className="filter-chip" onClick={() => ctx.go('guarantees')}>🛡 Гарантии</button>
+      </div>
       <div className="balance-card">
         <div>
           <div className="b-label">Деньги бизнеса · …3456</div>
@@ -1107,7 +1123,8 @@ function Credits({ ctx }) {
   const r = 0.115 / 12
   const pay = Math.round((sum * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1))
   return (
-    <SectionShell title="Деньги на развитие" sub="Финансирование для роста пекарни" ctx={ctx}>
+    <SectionShell title="Деньги на развитие" sub="Финансирование для роста пекарни" ctx={ctx}
+      actions={<button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('guarantees')}>Гарантии для сделок →</button>}>
       <div className="offer-banner">
         <div>
           <b>Вам одобрено 3 000 000 ₽ на развитие</b>
@@ -1416,7 +1433,8 @@ function Tasks({ ctx }) {
     setText('')
   }
   return (
-    <SectionShell title="Задачи" sub="Планы по бизнесу — ничего не потеряется" ctx={ctx}>
+    <SectionShell title="Задачи" sub="Планы по бизнесу — ничего не потеряется" ctx={ctx}
+      actions={<button className="btn-gray" style={{ width: 'auto' }} onClick={() => ctx.go('calendar')}>Календарь →</button>}>
       <div className="card" style={{ marginTop: 18 }}>
         <div className="crm-controls" style={{ marginTop: 0 }}>
           <div className="input-search">

@@ -6,11 +6,17 @@ export const NAV = [
   {
     section: 'Мой бизнес',
     items: [
-      { id: 'crm', label: 'CRM пекарни', icon: 'crm', badge: 'Новое' },
+      { id: 'crm', label: 'CRM и клиенты', icon: 'crm' },
       { id: 'orders', label: 'Заказы', icon: 'orders' },
-      { id: 'clients', label: 'Клиенты', icon: 'clients' },
       { id: 'analytics', label: 'Аналитика', icon: 'analytics' },
-      { id: 'tasks', label: 'Задачи', icon: 'guarantees' },
+      { id: 'tasks', label: 'Задачи и календарь', icon: 'calendar' },
+    ],
+  },
+  {
+    section: 'Маркетинг',
+    items: [
+      { id: 'growth', label: 'Привлечение клиентов', icon: 'megaphone' },
+      { id: 'comms', label: 'Рассылки', icon: 'comms' },
     ],
   },
   {
@@ -18,39 +24,23 @@ export const NAV = [
     items: [
       { id: 'services', label: 'Сервисы для бизнеса', icon: 'segments' },
       { id: 'loyalty', label: 'Клуб друзей', icon: 'people', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'xpay', label: 'Мгновенные переводы', icon: 'acquiring', badge: 'Новое', badgeClass: 'purple' },
       { id: 'one', label: 'МТС One', icon: 'phone', badge: 'Новое', badgeClass: 'purple' },
-    ],
-  },
-  {
-    section: 'Маркетинг',
-    items: [
-      { id: 'growth', label: 'Привлечение клиентов', icon: 'megaphone', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'segments', label: 'Сегменты', icon: 'segments' },
-      { id: 'comms', label: 'Рассылки', icon: 'comms' },
-      { id: 'mkt', label: 'Аналитика кампаний', icon: 'analytics', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'audience', label: 'Профиль клиента', icon: 'person', badge: 'Новое', badgeClass: 'purple' },
     ],
   },
   {
     section: 'Финансы',
     items: [
       { id: 'payments', label: 'Финансы', icon: 'accounts' },
-      { id: 'cards', label: 'Карты', icon: 'acquiring' },
       { id: 'acquiring', label: 'Приём оплаты', icon: 'acquiring' },
       { id: 'credits', label: 'Деньги на развитие', icon: 'credits' },
-      { id: 'deposits', label: 'Накопления', icon: 'deposits' },
-      { id: 'guarantees', label: 'Гарантии для сделок', icon: 'guarantees' },
       { id: 'accounting', label: 'Налоги и отчётность', icon: 'accounting' },
-      { id: 'promos', label: 'Акции', icon: 'spark' },
     ],
   },
   {
     section: 'Прочее',
     items: [
-      { id: 'connect', label: 'Подключение сервисов', icon: 'settings', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'team', label: 'Команда и роли', icon: 'clients', badge: 'Новое', badgeClass: 'purple' },
-      { id: 'documents', label: 'Документы', icon: 'documents' },
+      { id: 'connect', label: 'Подключение сервисов', icon: 'settings' },
+      { id: 'team', label: 'Команда и роли', icon: 'clients' },
       { id: 'settings', label: 'Настройки', icon: 'settings' },
     ],
   },
