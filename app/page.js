@@ -36,6 +36,14 @@ export default function Page() {
   const chatReplyIdx = useRef(0)
   const chatBodyRef = useRef(null)
 
+  /* меню открывается по наведению на бургер (десктоп); тап — для касаний */
+  const hoverTimer = useRef(null)
+  const menuHoverOpen = () => { clearTimeout(hoverTimer.current); setSideOpen(true) }
+  const menuHoverClose = () => {
+    clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => setSideOpen(false), 260)
+  }
+
   const heroAsk = useRef(null)
   const assistRef = useRef(null)
   const [assistVisible, setAssistVisible] = useState(false)
@@ -140,7 +148,8 @@ export default function Page() {
     <>
       {/* ── Шапка: только меню, логотип, подписка и профиль ── */}
       <header className="header">
-        <button className="burger" onClick={() => setSideOpen((v) => !v)} aria-label="Меню">
+        <button className="burger" onClick={() => setSideOpen(true)}
+          onMouseEnter={menuHoverOpen} onMouseLeave={menuHoverClose} aria-label="Меню">
           {icons.burger}
           {!notifRead && <span className="dot" />}
         </button>
@@ -165,7 +174,8 @@ export default function Page() {
       <div className={`shell${active === 'home' ? ' shell-home' : ''}`}>
         {/* ── Сайдбар ── */}
         {sideOpen && <div className="side-backdrop" onClick={() => setSideOpen(false)} />}
-        <aside className={`sidebar${sideOpen ? ' open' : ''}`}>
+        <aside className={`sidebar${sideOpen ? ' open' : ''}`}
+          onMouseEnter={menuHoverOpen} onMouseLeave={menuHoverClose}>
           {/* инструменты одной строкой (как в Notion): уведомления, поддержка, тема */}
           <div className="side-tools-row">
             <button className="tool-ic" onClick={() => { setNotifOpen(true); setSideOpen(false) }} aria-label="Уведомления">
