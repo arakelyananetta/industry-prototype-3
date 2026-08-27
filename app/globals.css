@@ -207,17 +207,19 @@ input, select, textarea { font-family: inherit; outline: none; }
   position: fixed; left: 0; top: 76px; bottom: 0; z-index: 60;
   width: 288px; min-width: 288px;
   height: calc(100vh - 76px); overflow-y: auto;
-  background: var(--glass-bg);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  /* плотная полупрозрачность: эффект стекла остаётся, но текст меню всегда читаем */
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
   border-right: 1px solid var(--glass-border);
   padding: 20px 16px 40px;
   transform: translateX(-105%); transition: transform .24s ease;
 }
-.sidebar.open { transform: none; box-shadow: 0 0 60px rgba(0, 0, 0, .22); }
+[data-theme="dark"] .sidebar { background: rgba(14, 16, 22, .9); }
+.sidebar.open { transform: none; box-shadow: 0 0 60px rgba(0, 0, 0, .3); }
 .side-backdrop {
   display: block; position: fixed; inset: 76px 0 0 0;
-  background: rgba(8, 10, 15, .4); z-index: 55;
+  background: rgba(8, 10, 15, .58); z-index: 55;
   animation: fade .18s ease;
 }
 .side-label {
