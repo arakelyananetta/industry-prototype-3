@@ -1071,10 +1071,10 @@ function Acquiring({ ctx }) {
       ]} />
       <div className="offer-banner purple">
         <div>
-          <b>X pay: приём оплаты за 0,3%</b>
-          <p>Клиент платит по QR из своего профиля «Мой МТС» — деньги приходят напрямую, без карт. В 4 раза дешевле оплаты картой.</p>
+          <b>Мгновенные переводы: приём оплаты за 0,3%</b>
+          <p>Клиент платит по QR прямо с телефона — деньги приходят напрямую, без карт. В 4 раза дешевле оплаты картой.</p>
         </div>
-        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Подключить X pay</button>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Подключить переводы</button>
       </div>
       <T
         head={['Терминал', 'Модель', 'Статус', 'Выручка сегодня']}
@@ -1677,7 +1677,7 @@ function Loyalty({ ctx }) {
           <b>Лояльность 2.0: бонусы оплачивают механики трафика</b>
           <p>Товар-магнит, рекомендации и партнёрские бронирования приводят людей и фондируют баллы — скидки из вашей маржи не нужны.</p>
         </div>
-        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Баллы работают через X pay</button>
+        <button className="btn-purple" style={{ marginTop: 0 }} onClick={() => ctx.go('xpay')}>Баллы работают через переводы</button>
       </div>
       <div className="seg-grid">
         {MECHANICS.map((m) => (
@@ -1699,7 +1699,7 @@ function Loyalty({ ctx }) {
       <div className="card" style={{ marginTop: 18 }}>
         <h3 className="block-title" style={{ fontSize: 16 }}>Как это работает вместе</h3>
         <ul className="promo-list" style={{ maxWidth: 'none', marginTop: 12 }}>
-          <li><span className="check">✓</span>Клиент платит через X pay — баллы начисляются и списываются автоматически, без карт лояльности.</li>
+          <li><span className="check">✓</span>Клиент платит мгновенным переводом — баллы начисляются и списываются автоматически, без карт лояльности.</li>
           <li><span className="check">✓</span>Спящие участники клуба получают напоминание в мессенджере — с их любимым товаром.</li>
           <li><span className="check">✓</span>Вся аналитика клуба — в «Сегментах» и «Профиле клиента».</li>
         </ul>
@@ -1708,25 +1708,25 @@ function Loyalty({ ctx }) {
   )
 }
 
-/* ═══ X pay: оплата напрямую (me2me) — трафик и 0,3% для бизнеса ═══ */
+/* ═══ Мгновенные переводы: оплата напрямую — трафик и 0,3% для бизнеса ═══ */
 function Xpay({ ctx }) {
   const [connected, setConnected] = useState(false)
   return (
-    <SectionShell title="X pay" sub="Оплата по QR напрямую из «Мой МТС» — без карт и терминалов" ctx={ctx}>
+    <SectionShell title="Мгновенные переводы" sub="Оплата по QR напрямую, со счёта на счёт — без карт и терминалов" ctx={ctx}>
       <StatRow stats={[
         ['Ваша комиссия', '0,3%', 'вместо 1,2% за карты'],
         ['Деньги приходят', 'мгновенно', 'а не на следующее утро'],
-        ['Для клиента', '1 клик', 'из приложения «Мой МТС»'],
+        ['Для клиента', '1 клик', 'прямо с телефона'],
         ['Баллы клуба', 'автоматически', 'связка с клубом друзей'],
       ]} />
       <div className="offer-banner purple">
         <div>
           <b>Почему это выгодно: перевод идёт напрямую, со счёта на счёт</b>
-          <p>Без карточных посредников — поэтому комиссия 0,3%. Миллионы пользователей «Мой МТС» уже платят так каждый день: это ещё и поток новых клиентов.</p>
+          <p>Без карточных посредников — поэтому комиссия 0,3%. Миллионы людей уже платят так каждый день: это ещё и поток новых клиентов.</p>
         </div>
         <button className="btn-purple" style={{ marginTop: 0 }}
-          onClick={() => { setConnected(true); ctx.ping('X pay подключён — QR-код появится на кассе (демо)') }}>
-          {connected ? 'Подключено ✓' : 'Подключить X pay'}
+          onClick={() => { setConnected(true); ctx.ping('Мгновенные переводы подключены — QR-код появится на кассе (демо)') }}>
+          {connected ? 'Подключено ✓' : 'Подключить переводы'}
         </button>
       </div>
       <div className="seg-grid">
@@ -1739,7 +1739,7 @@ function Xpay({ ctx }) {
           <p className="seg-desc" style={{ flex: 1 }}>Отправьте запрос на оплату в чат MAX — клиент подтверждает одним нажатием, заказ сразу помечается оплаченным.</p>
         </div>
         <div className="card seg-card">
-          <b>Трафик из «Мой МТС»</b>
+          <b>Поток новых клиентов</b>
           <p className="seg-desc" style={{ flex: 1 }}>Ваша точка видна в самом посещаемом разделе приложения. Люди рядом видят вас в момент, когда готовы платить.</p>
         </div>
         <div className="card seg-card">
@@ -1766,7 +1766,7 @@ function One({ ctx }) {
         ['Экономия на связи', '3 600 ₽/мес', '4 номера команды'],
         ['Условие', 'от 30 000 ₽', 'ежедневный остаток'],
         ['Статус в августе', '0 ₽', 'за связь и интернет'],
-        ['Оплата сервисов', 'через X pay', 'единый профиль МТС'],
+        ['Оплата сервисов', 'переводом', 'в один клик'],
       ]} />
       <div className="seg-grid">
         <div className="card seg-card">
@@ -1775,7 +1775,7 @@ function One({ ctx }) {
         </div>
         <div className="card seg-card">
           <div className="seg-top"><b>Усилитель сотовой связи</b><span className="chip blue">В подарок</span></div>
-          <p className="seg-desc" style={{ flex: 1 }}>Если в пекарне слабый сигнал — установим усилитель бесплатно. Касса, X pay и терминалы всегда онлайн.</p>
+          <p className="seg-desc" style={{ flex: 1 }}>Если в пекарне слабый сигнал — установим усилитель бесплатно. Касса, переводы и терминалы всегда онлайн.</p>
           <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.ping('Заявка на усилитель принята — инженер позвонит сегодня (демо)')}>Заказать установку</button>
         </div>
         <div className="card seg-card">
@@ -1783,9 +1783,9 @@ function One({ ctx }) {
           <p className="seg-desc" style={{ flex: 1 }}>Кабинет, MAX, касса и музыка в зале не тратят трафик — работают даже при нулевом балансе телефона.</p>
         </div>
         <div className="card seg-card">
-          <div className="seg-top"><b>Единый профиль «Мой МТС»</b><span className="chip purple">X pay</span></div>
-          <p className="seg-desc" style={{ flex: 1 }}>Один профиль для связи, финансов и оплат. Клиенты платят вам через X pay из того же приложения.</p>
-          <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.go('xpay')}>Про X pay →</button>
+          <div className="seg-top"><b>Мгновенные переводы</b><span className="chip purple">0,3%</span></div>
+          <p className="seg-desc" style={{ flex: 1 }}>Связь, финансы и оплаты — в одном месте. Клиенты платят вам мгновенным переводом прямо с телефона.</p>
+          <button className="btn-gray" style={{ marginTop: 12 }} onClick={() => ctx.go('xpay')}>Про мгновенные переводы →</button>
         </div>
       </div>
     </SectionShell>
